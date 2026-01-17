@@ -77,20 +77,15 @@ export const DashboardScreen: React.FC = () => {
         </View>
 
         <View style={styles.row}>
-          <View style={styles.emptySpace} />
-          <Card
-            title={`ESTOU ${getDaysSinceConfession()} DIA${getDaysSinceConfession() !== 1 ? 'S' : ''}`}
-            subtitle="SEM CONFESSAR"
-          />
-        </View>
-
-        <View style={styles.row}>
           <Card
             title="PRÓXIMA CONFISSÃO"
             subtitle={formatDate(nextConfession)}
             onPress={() => setDatePickerVisible(true)}
           />
-          <View style={styles.emptySpace} />
+          <Card
+            title={`ESTOU ${getDaysSinceConfession()} DIA${getDaysSinceConfession() !== 1 ? 'S' : ''}`}
+            subtitle="SEM CONFESSAR"
+          />
         </View>
 
         {/* Modal de seleção de data */}
