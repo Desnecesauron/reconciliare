@@ -28,7 +28,14 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "O app precisa acessar seu calendário para agendar lembretes de confissão."
+        }
+      ],
+      "@react-native-community/datetimepicker"
     ]
   }
 }

@@ -16,11 +16,11 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
 import { useUser } from '../contexts/UserContext';
-import { CustomButton, EmptyState, ConfirmModal } from '../components';
+import { CustomButton, EmptyState, ConfirmModal, DatePickerModal } from '../components';
 
 export const MeusPecadosScreen: React.FC = () => {
   const { colors } = useTheme();
-  const { mySins, addSin, removeSin, registerConfession } = useUser();
+  const { mySins, addSin, removeSin, registerConfession, setNextConfessionDate, scheduleConfessionReminder } = useUser();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 
@@ -30,6 +30,7 @@ export const MeusPecadosScreen: React.FC = () => {
   const [confessionModalVisible, setConfessionModalVisible] = useState(false);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [warningModalVisible, setWarningModalVisible] = useState(false);
+  const [scheduleModalVisible, setScheduleModalVisible] = useState(false);
   const [selectedSinId, setSelectedSinId] = useState<string | null>(null);
 
   const handleAddSin = () => {
@@ -69,6 +70,26 @@ export const MeusPecadosScreen: React.FC = () => {
 
   const handleSuccessClose = () => {
     setSuccessModalVisible(false);
+    setScheduleModalVisible(true);
+  };
+
+  const getDefaultNextConfessionDate = (): Date => {
+    const date = new Date();
+    date.setDate(date.getDate() + 30);
+    return date;
+  };
+
+  const handleScheduleConfirm = async (date: Date, addToCalendar: boolean) => {
+    setScheduleModalVisible(false);
+    await setNextConfessionDate(date.toISOString());
+    if (addToCalendar) {
+      await scheduleConfessionReminder(date);
+    }
+    navigation.goBack();
+  };
+
+  const handleScheduleCancel = () => {
+    setScheduleModalVisible(false);
     navigation.goBack();
   };
 
@@ -227,6 +248,14 @@ export const MeusPecadosScreen: React.FC = () => {
         cancelText=""
         onConfirm={() => setWarningModalVisible(false)}
         onCancel={() => setWarningModalVisible(false)}
+      />
+
+      {/* Modal para agendar próxima confissão */}
+      <DatePickerModal
+        visible={scheduleModalVisible}
+        initialDate={getDefaultNextConfessionDate()}
+        onConfirm={handleScheduleConfirm}
+        onCancel={handleScheduleCancel}
       />
     </View>
   );

@@ -1,18 +1,19 @@
 // Tela principal (Dashboard)
 
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { useUser } from '../contexts/UserContext';
-import { Card } from '../components';
+import { Card, DatePickerModal } from '../components';
 
 export const DashboardScreen: React.FC = () => {
   const { colors } = useTheme();
-  const { lastConfession, nextConfession } = useUser();
+  const { lastConfession, nextConfession, setNextConfessionDate, scheduleConfessionReminder } = useUser();
   const navigation = useNavigation();
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
 
   const formatDate = (dateString: string | null): string => {
     if (!dateString) return '--/--/--';
@@ -35,6 +36,15 @@ export const DashboardScreen: React.FC = () => {
 
   const openDrawer = () => {
     navigation.dispatch(DrawerActions.openDrawer());
+  };
+
+  const handleDateConfirm = async (date: Date, addToCalendar: boolean) => {
+    setDatePickerVisible(false);
+    await setNextConfessionDate(date.toISOString());
+    if (addToCalendar) {
+      // Passar true para deletar evento anterior quando é alteração de data
+      await scheduleConfessionReminder(date, true);
+    }
   };
 
   return (
@@ -78,10 +88,18 @@ export const DashboardScreen: React.FC = () => {
           <Card
             title="PRÓXIMA CONFISSÃO"
             subtitle={formatDate(nextConfession)}
-            onPress={() => navigation.navigate('Configuracoes' as never)}
+            onPress={() => setDatePickerVisible(true)}
           />
           <View style={styles.emptySpace} />
         </View>
+
+        {/* Modal de seleção de data */}
+        <DatePickerModal
+          visible={datePickerVisible}
+          initialDate={nextConfession ? new Date(nextConfession) : undefined}
+          onConfirm={handleDateConfirm}
+          onCancel={() => setDatePickerVisible(false)}
+        />
 
         {/* Logo/Branding */}
         <View style={styles.brandingContainer}>

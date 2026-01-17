@@ -11,6 +11,7 @@ const KEYS = {
   MY_SINS: '@reconciliare:my_sins',
   LAST_CONFESSION: '@reconciliare:last_confession',
   NEXT_CONFESSION: '@reconciliare:next_confession',
+  CALENDAR_EVENT_ID: '@reconciliare:calendar_event_id',
   PIN: 'reconciliare_pin',
   IS_REGISTERED: '@reconciliare:is_registered',
 };
@@ -97,6 +98,19 @@ export const getNextConfession = async (): Promise<string | null> => {
   return await AsyncStorage.getItem(KEYS.NEXT_CONFESSION);
 };
 
+// Funções para ID do evento do calendário
+export const saveCalendarEventId = async (eventId: string): Promise<void> => {
+  await AsyncStorage.setItem(KEYS.CALENDAR_EVENT_ID, eventId);
+};
+
+export const getCalendarEventId = async (): Promise<string | null> => {
+  return await AsyncStorage.getItem(KEYS.CALENDAR_EVENT_ID);
+};
+
+export const clearCalendarEventId = async (): Promise<void> => {
+  await AsyncStorage.removeItem(KEYS.CALENDAR_EVENT_ID);
+};
+
 // Funções para registro
 export const setIsRegistered = async (value: boolean): Promise<void> => {
   await AsyncStorage.setItem(KEYS.IS_REGISTERED, JSON.stringify(value));
@@ -116,6 +130,7 @@ export const clearAllData = async (): Promise<void> => {
     KEYS.MY_SINS,
     KEYS.LAST_CONFESSION,
     KEYS.NEXT_CONFESSION,
+    KEYS.CALENDAR_EVENT_ID,
     KEYS.IS_REGISTERED,
   ]);
   await deletePin();

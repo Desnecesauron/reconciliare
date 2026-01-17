@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import * as Crypto from 'expo-crypto';
+import * as Calendar from 'expo-calendar';
+import { Platform } from 'react-native';
 import { User, Confession, Sin, ExamCategory, ThemeType, LanguageType } from '../types';
 import {
   saveUser,
@@ -18,6 +20,9 @@ import {
   saveExamState,
   getExamState,
   clearExamState,
+  saveCalendarEventId,
+  getCalendarEventId,
+  clearCalendarEventId,
 } from '../services/storage';
 
 interface UserContextData {
@@ -39,6 +44,7 @@ interface UserContextData {
   loadExam: () => Promise<ExamCategory[] | null>;
   registerConfession: (notes?: string) => Promise<void>;
   setNextConfessionDate: (date: string) => Promise<void>;
+  scheduleConfessionReminder: (date: Date, deletePreviousEvent?: boolean) => Promise<boolean>;
   resetUserData: () => void;
 }
 
@@ -219,6 +225,68 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     setNextConfessionState(date);
   };
 
+  const scheduleConfessionReminder = async (date: Date, deletePreviousEvent: boolean = false): Promise<boolean> => {
+    try {
+      // Solicitar permissão para acessar o calendário
+      const { status } = await Calendar.requestCalendarPermissionsAsync();
+      if (status !== 'granted') {
+        return false;
+      }
+
+      // Se deletePreviousEvent for true, tentar deletar o evento anterior
+      if (deletePreviousEvent) {
+        const previousEventId = await getCalendarEventId();
+        if (previousEventId) {
+          try {
+            await Calendar.deleteEventAsync(previousEventId);
+          } catch (deleteError) {
+            // Evento pode já ter sido deletado manualmente, ignorar erro
+            console.log('Previous event not found or already deleted');
+          }
+          await clearCalendarEventId();
+        }
+      }
+
+      // Obter o calendário padrão
+      const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
+      const defaultCalendar = Platform.OS === 'ios'
+        ? calendars.find((cal) => cal.source.name === 'Default')
+        : calendars.find((cal) => cal.accessLevel === Calendar.CalendarAccessLevel.OWNER);
+
+      if (!defaultCalendar) {
+        return false;
+      }
+
+      // Criar o evento
+      const startDate = new Date(date);
+      startDate.setHours(9, 0, 0, 0); // 9:00 da manhã
+
+      const endDate = new Date(startDate);
+      endDate.setHours(10, 0, 0, 0); // 10:00 da manhã
+
+      const eventId = await Calendar.createEventAsync(defaultCalendar.id, {
+        title: 'Confissão - Reconciliare',
+        notes: 'Lembrete para se confessar. Que Deus abençoe você!',
+        startDate,
+        endDate,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        alarms: [
+          { relativeOffset: -10080 }, // 7 dias antes (7 * 24 * 60)
+          { relativeOffset: -1440 },  // 1 dia antes (24 * 60)
+          { relativeOffset: -60 },    // 1 hora antes
+        ],
+      });
+
+      // Salvar o ID do evento para poder deletar depois
+      await saveCalendarEventId(eventId);
+
+      return true;
+    } catch (error) {
+      console.error('Error scheduling confession reminder:', error);
+      return false;
+    }
+  };
+
   const resetUserData = () => {
     setUser(null);
     setConfessions([]);
@@ -249,6 +317,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         loadExam,
         registerConfession,
         setNextConfessionDate,
+        scheduleConfessionReminder,
         resetUserData,
       }}
     >
