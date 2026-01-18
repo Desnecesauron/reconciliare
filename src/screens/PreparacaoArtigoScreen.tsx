@@ -1,9 +1,10 @@
 // Tela de Artigo de Preparação
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import Markdown from 'react-native-markdown-display';
 import { useTheme } from '../contexts/ThemeContext';
 import { artigos } from '../data/preparacao';
 
@@ -20,6 +21,69 @@ export const PreparacaoArtigoScreen: React.FC = () => {
 
   const articleId = route.params?.articleId;
   const article = artigos.find((a) => a.id === articleId);
+
+  const markdownStyles = useMemo(() => ({
+    body: {
+      color: colors.text,
+      fontSize: 16,
+      lineHeight: 26,
+    },
+    paragraph: {
+      marginBottom: 16,
+    },
+    strong: {
+      fontWeight: '700' as const,
+      color: colors.text,
+    },
+    heading1: {
+      fontSize: 22,
+      fontWeight: '700' as const,
+      color: colors.primary,
+      marginTop: 20,
+      marginBottom: 12,
+    },
+    heading2: {
+      fontSize: 20,
+      fontWeight: '600' as const,
+      color: colors.primary,
+      marginTop: 18,
+      marginBottom: 10,
+    },
+    heading3: {
+      fontSize: 18,
+      fontWeight: '600' as const,
+      color: colors.primary,
+      marginTop: 16,
+      marginBottom: 8,
+    },
+    bullet_list: {
+      marginBottom: 16,
+    },
+    ordered_list: {
+      marginBottom: 16,
+    },
+    list_item: {
+      marginBottom: 8,
+    },
+    bullet_list_icon: {
+      color: colors.primary,
+      fontSize: 16,
+      marginRight: 8,
+    },
+    ordered_list_icon: {
+      color: colors.primary,
+      fontSize: 16,
+      marginRight: 8,
+    },
+    blockquote: {
+      backgroundColor: colors.surface,
+      borderLeftColor: colors.primary,
+      borderLeftWidth: 4,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      marginVertical: 12,
+    },
+  }), [colors]);
 
   if (!article) {
     return (
@@ -56,10 +120,10 @@ export const PreparacaoArtigoScreen: React.FC = () => {
 
         <View style={[styles.divider, { backgroundColor: colors.primary }]} />
 
-        {/* Conteúdo */}
-        <Text style={[styles.articleContent, { color: colors.text }]}>
+        {/* Conteúdo em Markdown */}
+        <Markdown style={markdownStyles}>
           {article.content}
-        </Text>
+        </Markdown>
 
         {/* Fonte */}
         {article.source && (
@@ -110,11 +174,6 @@ const styles = StyleSheet.create({
   divider: {
     height: 2,
     marginBottom: 20,
-  },
-  articleContent: {
-    fontSize: 16,
-    lineHeight: 26,
-    textAlign: 'justify',
   },
   source: {
     fontSize: 14,

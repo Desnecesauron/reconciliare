@@ -30,6 +30,16 @@ import { SobreScreen } from '../screens/SobreScreen';
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
+// Stack de Preparação
+const PreparacaoStack: React.FC = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="PreparacaoMenu" component={PreparacaoScreen} />
+      <Stack.Screen name="PreparacaoArtigo" component={PreparacaoArtigoScreen} />
+    </Stack.Navigator>
+  );
+};
+
 // Stack de autenticação
 const AuthStack: React.FC = () => {
   const { isRegistered } = useAuth();
@@ -65,8 +75,7 @@ const MainDrawer: React.FC = () => {
       <Drawer.Screen name="MeusPecados" component={MeusPecadosScreen} />
       <Drawer.Screen name="Historico" component={HistoricoScreen} />
       <Drawer.Screen name="Oracoes" component={OracoesScreen} />
-      <Drawer.Screen name="Preparacao" component={PreparacaoScreen} />
-      <Drawer.Screen name="PreparacaoArtigo" component={PreparacaoArtigoScreen} />
+      <Drawer.Screen name="Preparacao" component={PreparacaoStack} />
       <Drawer.Screen name="Configuracoes" component={ConfiguracoesScreen} />
       <Drawer.Screen name="Contribuir" component={ContribuirScreen} />
       <Drawer.Screen name="Ajuda" component={AjudaScreen} />
