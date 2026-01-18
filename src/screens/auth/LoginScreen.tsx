@@ -17,7 +17,7 @@ import { useUser } from '../../contexts/UserContext';
 import { CustomButton } from '../../components';
 
 export const LoginScreen: React.FC = () => {
-  const { colors } = useTheme();
+  const { colors, resetTheme } = useTheme();
   const { login, clearAll } = useAuth();
   const { resetUserData } = useUser();
 
@@ -65,6 +65,7 @@ export const LoginScreen: React.FC = () => {
           onPress: async () => {
             await clearAll();
             resetUserData();
+            resetTheme();
             Alert.alert('Sucesso', 'Seus dados foram apagados. Você pode criar uma nova conta.');
           },
         },

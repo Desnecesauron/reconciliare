@@ -9,6 +9,7 @@ interface ThemeContextData {
   theme: ThemeType;
   colors: ThemeColors;
   setTheme: (theme: ThemeType) => Promise<void>;
+  resetTheme: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextData>({} as ThemeContextData);
@@ -44,8 +45,13 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     }
   };
 
+  const resetTheme = () => {
+    setThemeState('purple');
+    setColors(getTheme('purple'));
+  };
+
   return (
-    <ThemeContext.Provider value={{ theme, colors, setTheme }}>
+    <ThemeContext.Provider value={{ theme, colors, setTheme, resetTheme }}>
       {children}
     </ThemeContext.Provider>
   );
