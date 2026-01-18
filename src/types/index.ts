@@ -1,6 +1,6 @@
 // Tipos principais do app Reconciliare
 
-export type ThemeType = 'purple' | 'red' | 'blue' | 'black' | 'green';
+export type ThemeType = 'purple' | 'red' | 'blue' | 'black' | 'green' | 'dark';
 export type LanguageType = 'pt' | 'en' | 'es';
 
 export interface User {

@@ -112,6 +112,24 @@ export const themes: Record<ThemeType, ThemeColors> = {
     drawer: '#FFFFFF',
     xpColor: '#EAB308',
   },
+  dark: {
+    primary: '#3B4A54',
+    primaryLight: '#4B5C68',
+    secondary: '#5C6E7A',
+    background: '#0B141A',
+    surface: '#111B21',
+    text: '#E9EDEF',
+    textLight: '#8696A0',
+    textOnPrimary: '#FFFFFF',
+    border: '#2A3942',
+    error: '#EF4444',
+    success: '#22C55E',
+    warning: '#F59E0B',
+    card: '#1F2C34',
+    cardBorder: '#2A3942',
+    drawer: '#111B21',
+    xpColor: '#EAB308',
+  },
 };
 
 export const getTheme = (themeType: ThemeType): ThemeColors => {
@@ -124,4 +142,5 @@ export const themeOptions: { key: ThemeType; color: string }[] = [
   { key: 'blue', color: '#2563EB' },
   { key: 'black', color: '#1F2937' },
   { key: 'green', color: '#16A34A' },
+  { key: 'dark', color: '#0B141A' },
 ];

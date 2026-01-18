@@ -53,8 +53,10 @@ const styles = StyleSheet.create({
   },
   optionsContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'flex-start',
-    gap: 16,
+    gap: 12,
+    rowGap: 12,
   },
   option: {
     width: 50,

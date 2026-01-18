@@ -110,7 +110,7 @@ export const ConfiguracoesScreen: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.inputRow}>
             <View style={styles.pinIcon}>
-              <Text style={[styles.pinIconText, { color: colors.text }]}>PIN</Text>
+              <Text style={styles.pinIconText}>PIN</Text>
             </View>
             <View style={styles.inputContainer}>
               <Text style={[styles.label, { color: colors.textLight }]}>Senha</Text>
@@ -134,7 +134,7 @@ export const ConfiguracoesScreen: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.inputRow}>
             <View style={styles.pinIcon}>
-              <Text style={[styles.pinIconText, { color: colors.text }]}>PIN</Text>
+              <Text style={styles.pinIconText}>PIN</Text>
             </View>
             <View style={styles.inputContainer}>
               <Text style={[styles.label, { color: colors.textLight }]}>Nova Senha</Text>
