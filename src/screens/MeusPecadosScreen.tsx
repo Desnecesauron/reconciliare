@@ -16,11 +16,13 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
 import { useUser } from '../contexts/UserContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { CustomButton, EmptyState, ConfirmModal, DatePickerModal } from '../components';
 
 export const MeusPecadosScreen: React.FC = () => {
   const { colors } = useTheme();
   const { mySins, addSin, removeSin, registerConfession, setNextConfessionDate, scheduleConfessionReminder } = useUser();
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 
@@ -118,7 +120,7 @@ export const MeusPecadosScreen: React.FC = () => {
           <Ionicons name="arrow-back" size={24} color={colors.textOnPrimary} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.textOnPrimary }]}>
-          Meus Pecados ({mySins.length})
+          {t('sins.title')} ({mySins.length})
         </Text>
         <TouchableOpacity
           onPress={() => setModalVisible(true)}
@@ -130,7 +132,7 @@ export const MeusPecadosScreen: React.FC = () => {
 
       {/* Lista de pecados */}
       {mySins.length === 0 ? (
-        <EmptyState message="Sem pecados registrados" />
+        <EmptyState message={t('sins.empty')} />
       ) : (
         <FlatList
           data={mySins}
@@ -143,7 +145,7 @@ export const MeusPecadosScreen: React.FC = () => {
       {/* Botão de confissão */}
       <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
         <CustomButton
-          title="RECONCILIARE"
+          title={t('sins.reconciliare')}
           onPress={handleConfession}
           style={styles.confessionButton}
         />
@@ -164,10 +166,10 @@ export const MeusPecadosScreen: React.FC = () => {
             <TouchableWithoutFeedback>
               <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
                 <Text style={[styles.modalTitle, { color: colors.text }]}>
-                  Pecado
+                  {t('sins.addSin')}
                 </Text>
                 <Text style={[styles.modalLabel, { color: colors.textLight }]}>
-                  Descreva o pecado:
+                  {t('sins.describeSin')}
                 </Text>
                 <TextInput
                   style={[
@@ -179,18 +181,18 @@ export const MeusPecadosScreen: React.FC = () => {
                   ]}
                   value={newSinText}
                   onChangeText={setNewSinText}
-                  placeholder="Digite aqui..."
+                  placeholder={t('sins.inputPlaceholder')}
                   placeholderTextColor={colors.textLight}
                   multiline
                 />
                 <View style={styles.modalButtons}>
                   <CustomButton
-                    title="OK"
+                    title={t('common.ok')}
                     onPress={handleAddSin}
                     style={styles.modalButton}
                   />
                   <CustomButton
-                    title="CANCELAR"
+                    title={t('common.cancel').toUpperCase()}
                     onPress={() => {
                       setNewSinText('');
                       setModalVisible(false);
@@ -208,10 +210,10 @@ export const MeusPecadosScreen: React.FC = () => {
       {/* Modal de confirmação para remover pecado */}
       <ConfirmModal
         visible={removeModalVisible}
-        title="Remover pecado"
-        message="Deseja remover este pecado da lista?"
-        confirmText="Remover"
-        cancelText="Cancelar"
+        title={t('sins.removeSin')}
+        message={t('sins.removeSinMessage')}
+        confirmText={t('common.remove')}
+        cancelText={t('common.cancel')}
         confirmStyle="destructive"
         onConfirm={confirmRemoveSin}
         onCancel={() => setRemoveModalVisible(false)}
@@ -220,10 +222,10 @@ export const MeusPecadosScreen: React.FC = () => {
       {/* Modal de confirmação para confissão */}
       <ConfirmModal
         visible={confessionModalVisible}
-        title="Reconciliare"
-        message="Você já se confessou e recebeu a absolvição? Esta ação limpará sua lista de pecados e registrará a confissão."
-        confirmText="Sim, me confessei"
-        cancelText="Cancelar"
+        title={t('sins.confessionTitle')}
+        message={t('sins.confessionMessage')}
+        confirmText={t('sins.confessionConfirm')}
+        cancelText={t('common.cancel')}
         onConfirm={confirmConfession}
         onCancel={() => setConfessionModalVisible(false)}
       />
@@ -231,9 +233,9 @@ export const MeusPecadosScreen: React.FC = () => {
       {/* Modal de sucesso */}
       <ConfirmModal
         visible={successModalVisible}
-        title="Parabéns!"
-        message="Sua confissão foi registrada. Que Deus abençoe você!"
-        confirmText="OK"
+        title={t('sins.successTitle')}
+        message={t('sins.successMessage')}
+        confirmText={t('common.ok')}
         cancelText=""
         onConfirm={handleSuccessClose}
         onCancel={handleSuccessClose}
@@ -242,9 +244,9 @@ export const MeusPecadosScreen: React.FC = () => {
       {/* Modal de aviso */}
       <ConfirmModal
         visible={warningModalVisible}
-        title="Atenção"
-        message="Não há pecados para confessar."
-        confirmText="OK"
+        title={t('sins.warningTitle')}
+        message={t('sins.warningMessage')}
+        confirmText={t('common.ok')}
         cancelText=""
         onConfirm={() => setWarningModalVisible(false)}
         onCancel={() => setWarningModalVisible(false)}

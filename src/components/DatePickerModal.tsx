@@ -13,6 +13,7 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface DatePickerModalProps {
   visible: boolean;
@@ -28,6 +29,7 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
   onCancel,
 }) => {
   const { colors } = useTheme();
+  const { t, getLocale } = useLanguage();
   const [selectedDate, setSelectedDate] = useState<Date>(
     initialDate || new Date()
   );
@@ -48,7 +50,7 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
   };
 
   const formatDate = (date: Date): string => {
-    return date.toLocaleDateString('pt-BR', {
+    return date.toLocaleDateString(getLocale(), {
       weekday: 'long',
       day: '2-digit',
       month: 'long',
@@ -79,10 +81,10 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
           <TouchableWithoutFeedback>
             <View style={[styles.content, { backgroundColor: colors.surface }]}>
               <Text style={[styles.title, { color: colors.text }]}>
-                Próxima Confissão
+                {t('datePicker.title')}
               </Text>
               <Text style={[styles.subtitle, { color: colors.textLight }]}>
-                Quando você pretende se confessar novamente?
+                {t('datePicker.subtitle')}
               </Text>
 
               {/* Date Display / Picker Trigger for Android */}
@@ -106,7 +108,7 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
                   display={Platform.OS === 'ios' ? 'spinner' : 'default'}
                   onChange={handleDateChange}
                   minimumDate={new Date()}
-                  locale="pt-BR"
+                  locale={getLocale()}
                   style={styles.datePicker}
                 />
               )}
@@ -130,7 +132,7 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
                   )}
                 </View>
                 <Text style={[styles.checkboxLabel, { color: colors.text }]}>
-                  Adicionar lembrete ao calendário
+                  {t('datePicker.addToCalendar')}
                 </Text>
               </TouchableOpacity>
 
@@ -141,7 +143,7 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
                   onPress={onCancel}
                 >
                   <Text style={[styles.buttonText, { color: colors.textLight }]}>
-                    Cancelar
+                    {t('common.cancel')}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -153,7 +155,7 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
                   onPress={handleConfirm}
                 >
                   <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
-                    Confirmar
+                    {t('common.confirm')}
                   </Text>
                 </TouchableOpacity>
               </View>

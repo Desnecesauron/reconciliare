@@ -7,18 +7,20 @@ import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { useUser } from '../contexts/UserContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { Card, DatePickerModal } from '../components';
 
 export const DashboardScreen: React.FC = () => {
   const { colors } = useTheme();
   const { lastConfession, nextConfession, setNextConfessionDate, scheduleConfessionReminder } = useUser();
+  const { t, getLocale } = useLanguage();
   const navigation = useNavigation();
   const [datePickerVisible, setDatePickerVisible] = useState(false);
 
   const formatDate = (dateString: string | null): string => {
     if (!dateString) return '--/--/--';
     const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
+    return date.toLocaleDateString(getLocale(), {
       day: '2-digit',
       month: '2-digit',
       year: '2-digit',
@@ -66,25 +68,27 @@ export const DashboardScreen: React.FC = () => {
       >
         <View style={styles.row}>
           <Card
-            title="ÚLTIMA CONFISSÃO"
+            title={t('dashboard.lastConfession')}
             subtitle={formatDate(lastConfession)}
             onPress={() => navigation.navigate('Historico' as never)}
           />
           <Card
-            title="MEU HISTÓRICO"
+            title={t('dashboard.myHistory')}
             onPress={() => navigation.navigate('Historico' as never)}
           />
         </View>
 
         <View style={styles.row}>
           <Card
-            title="PRÓXIMA CONFISSÃO"
+            title={t('dashboard.nextConfession')}
             subtitle={formatDate(nextConfession)}
             onPress={() => setDatePickerVisible(true)}
           />
           <Card
-            title={`ESTOU ${getDaysSinceConfession()} DIA${getDaysSinceConfession() !== 1 ? 'S' : ''}`}
-            subtitle="SEM CONFESSAR"
+            title={getDaysSinceConfession() !== 1
+              ? t('dashboard.daysWithoutPlural', { count: getDaysSinceConfession() })
+              : t('dashboard.daysWithout', { count: getDaysSinceConfession() })}
+            subtitle={t('dashboard.withoutConfessing')}
           />
         </View>
 

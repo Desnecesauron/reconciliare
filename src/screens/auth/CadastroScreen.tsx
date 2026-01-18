@@ -14,6 +14,7 @@ import {
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUser } from '../../contexts/UserContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import {
   Avatar,
   CustomButton,
@@ -22,11 +23,13 @@ import {
   PinInput,
 } from '../../components';
 import { ThemeType, LanguageType } from '../../types';
+import i18n from '../../i18n';
 
 export const CadastroScreen: React.FC = () => {
   const { colors, setTheme } = useTheme();
   const { register } = useAuth();
   const { createUser } = useUser();
+  const { t } = useLanguage();
 
   const [name, setName] = useState('');
   const [pin, setPin] = useState('');
@@ -41,20 +44,25 @@ export const CadastroScreen: React.FC = () => {
     setTheme(theme);
   };
 
+  const handleLanguageChange = (language: LanguageType) => {
+    setSelectedLanguage(language);
+    i18n.locale = language;
+  };
+
   const handleNext = () => {
     if (step === 1) {
       if (!name.trim()) {
-        Alert.alert('Erro', 'Por favor, insira seu nome.');
+        Alert.alert(t('common.error'), t('auth.errorEmptyName'));
         return;
       }
       setStep(2);
     } else if (step === 2) {
       if (pin.length !== 4) {
-        Alert.alert('Erro', 'O PIN deve ter 4 dígitos.');
+        Alert.alert(t('common.error'), t('auth.errorPinLength'));
         return;
       }
       if (pin !== confirmPin) {
-        Alert.alert('Erro', 'Os PINs não coincidem.');
+        Alert.alert(t('common.error'), t('auth.errorPinMatch'));
         return;
       }
       handleRegister();
@@ -67,7 +75,7 @@ export const CadastroScreen: React.FC = () => {
       await createUser(name.trim(), selectedTheme, selectedLanguage);
       await register(pin);
     } catch (error) {
-      Alert.alert('Erro', 'Ocorreu um erro ao criar sua conta.');
+      Alert.alert(t('common.error'), t('auth.errorRegister'));
       console.error(error);
     } finally {
       setLoading(false);
@@ -81,7 +89,7 @@ export const CadastroScreen: React.FC = () => {
     >
       <View style={[styles.header, { backgroundColor: colors.primary }]}>
         <Text style={[styles.headerTitle, { color: colors.textOnPrimary }]}>
-          CADASTRO
+          {t('auth.register')}
         </Text>
       </View>
 
@@ -107,7 +115,7 @@ export const CadastroScreen: React.FC = () => {
                       borderBottomColor: colors.primary,
                     },
                   ]}
-                  placeholder="Nome"
+                  placeholder={t('auth.name')}
                   placeholderTextColor={colors.textLight}
                   value={name}
                   onChangeText={setName}
@@ -117,7 +125,7 @@ export const CadastroScreen: React.FC = () => {
 
             <View style={styles.section}>
               <ThemeSelector
-                label="Temas:"
+                label={t('auth.themes')}
                 selected={selectedTheme}
                 onSelect={handleThemeChange}
               />
@@ -125,9 +133,9 @@ export const CadastroScreen: React.FC = () => {
 
             <View style={styles.section}>
               <LanguageSelector
-                label="Idiomas:"
+                label={t('auth.languages')}
                 selected={selectedLanguage}
-                onSelect={setSelectedLanguage}
+                onSelect={handleLanguageChange}
               />
             </View>
           </>
@@ -136,22 +144,22 @@ export const CadastroScreen: React.FC = () => {
         {step === 2 && (
           <>
             <Text style={[styles.stepTitle, { color: colors.text }]}>
-              Crie seu PIN de segurança
+              {t('auth.createPin')}
             </Text>
             <Text style={[styles.stepDescription, { color: colors.textLight }]}>
-              Este PIN será usado para proteger seus dados
+              {t('auth.pinDescription')}
             </Text>
 
             <View style={styles.pinSection}>
               <Text style={[styles.pinLabel, { color: colors.text }]}>
-                Digite o PIN:
+                {t('auth.enterPin')}
               </Text>
               <PinInput value={pin} onChange={setPin} autoFocus />
             </View>
 
             <View style={styles.pinSection}>
               <Text style={[styles.pinLabel, { color: colors.text }]}>
-                Confirme o PIN:
+                {t('auth.confirmPin')}
               </Text>
               <PinInput value={confirmPin} onChange={setConfirmPin} />
             </View>
@@ -159,7 +167,7 @@ export const CadastroScreen: React.FC = () => {
         )}
 
         <CustomButton
-          title={step === 1 ? 'PRÓXIMO' : 'CADASTRAR'}
+          title={step === 1 ? t('auth.nextButton') : t('auth.registerButton')}
           onPress={handleNext}
           loading={loading}
           style={styles.button}
@@ -167,7 +175,7 @@ export const CadastroScreen: React.FC = () => {
 
         {step === 2 && (
           <CustomButton
-            title="VOLTAR"
+            title={t('auth.backButton')}
             onPress={() => setStep(1)}
             variant="outline"
             style={styles.backButton}

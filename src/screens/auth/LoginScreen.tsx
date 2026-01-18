@@ -14,12 +14,14 @@ import {
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUser } from '../../contexts/UserContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { CustomButton } from '../../components';
 
 export const LoginScreen: React.FC = () => {
   const { colors, resetTheme } = useTheme();
   const { login, clearAll } = useAuth();
   const { resetUserData } = useUser();
+  const { t } = useLanguage();
 
   const [pin, setPin] = useState('');
   const [loading, setLoading] = useState(false);
@@ -42,11 +44,11 @@ export const LoginScreen: React.FC = () => {
     try {
       const success = await login(pin);
       if (!success) {
-        setError('PIN incorreto');
+        setError(t('auth.incorrectPin'));
         setPin('');
       }
     } catch (error) {
-      setError('Ocorreu um erro');
+      setError(t('auth.errorOccurred'));
       setPin('');
     } finally {
       setLoading(false);
@@ -55,18 +57,18 @@ export const LoginScreen: React.FC = () => {
 
   const handleForgotPin = () => {
     Alert.alert(
-      'Esqueceu a senha?',
-      'Para redefinir seu PIN, todos os seus dados serão apagados. Deseja continuar?',
+      t('auth.forgotPinTitle'),
+      t('auth.forgotPinMessage'),
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Redefinir',
+          text: t('auth.reset'),
           style: 'destructive',
           onPress: async () => {
             await clearAll();
             resetUserData();
             resetTheme();
-            Alert.alert('Sucesso', 'Seus dados foram apagados. Você pode criar uma nova conta.');
+            Alert.alert(t('common.success'), t('auth.resetSuccess'));
           },
         },
       ]
@@ -88,7 +90,7 @@ export const LoginScreen: React.FC = () => {
 
         {/* PIN Input */}
         <View style={styles.pinContainer}>
-          <Text style={styles.pinLabel}>PIN</Text>
+          <Text style={styles.pinLabel}>{t('auth.pin')}</Text>
           <TextInput
             style={[styles.pinInput, { borderBottomColor: colors.textLight }]}
             value={pin}
@@ -97,7 +99,7 @@ export const LoginScreen: React.FC = () => {
             maxLength={4}
             secureTextEntry
             autoFocus
-            placeholder="••••"
+            placeholder={t('auth.pinPlaceholder')}
             placeholderTextColor={colors.textLight}
           />
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
@@ -105,7 +107,7 @@ export const LoginScreen: React.FC = () => {
 
         {/* Botões */}
         <CustomButton
-          title="ENTRAR"
+          title={t('auth.login')}
           onPress={handleLogin}
           loading={loading}
           disabled={pin.length !== 4}
@@ -113,7 +115,7 @@ export const LoginScreen: React.FC = () => {
         />
 
         <CustomButton
-          title="ESQUECI A SENHA"
+          title={t('auth.forgotPin')}
           onPress={handleForgotPin}
           variant="outline"
           style={styles.forgotButton}

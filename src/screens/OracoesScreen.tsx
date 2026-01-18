@@ -1,6 +1,6 @@
 // Tela de Orações
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -14,14 +14,25 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
-import { oracoes } from '../data/oracoes';
+import { useLanguage } from '../contexts/LanguageContext';
 import { Prayer } from '../types';
 
 export const OracoesScreen: React.FC = () => {
   const { colors } = useTheme();
+  const { t, language } = useLanguage();
   const navigation = useNavigation();
 
   const [selectedPrayer, setSelectedPrayer] = useState<Prayer | null>(null);
+
+  // Obter orações traduzidas
+  const oracoes = useMemo((): Prayer[] => {
+    const prayersData = t('prayers') as unknown as Record<string, { title: string; content: string }>;
+    return Object.entries(prayersData).map(([key, value]) => ({
+      id: key,
+      title: value.title,
+      content: value.content,
+    }));
+  }, [language]);
 
   const renderPrayerItem = ({ item }: { item: Prayer }) => (
     <TouchableOpacity
@@ -46,7 +57,7 @@ export const OracoesScreen: React.FC = () => {
           <Ionicons name="arrow-back" size={24} color={colors.textOnPrimary} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.textOnPrimary }]}>
-          Orações
+          {t('nav.prayers')}
         </Text>
         <View style={styles.placeholder} />
       </View>

@@ -8,6 +8,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider } from './src/contexts/ThemeContext';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { UserProvider } from './src/contexts/UserContext';
+import { LanguageProvider } from './src/contexts/LanguageContext';
 import { AppNavigator } from './src/navigation/AppNavigator';
 
 export default function App() {
@@ -17,8 +18,10 @@ export default function App() {
         <ThemeProvider>
           <AuthProvider>
             <UserProvider>
-              <StatusBar style="light" />
-              <AppNavigator />
+              <LanguageProvider>
+                <StatusBar style="light" />
+                <AppNavigator />
+              </LanguageProvider>
             </UserProvider>
           </AuthProvider>
         </ThemeProvider>

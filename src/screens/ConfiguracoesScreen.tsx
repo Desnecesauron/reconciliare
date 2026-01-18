@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
 import { useUser } from '../contexts/UserContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import {
   Avatar,
   CustomButton,
@@ -22,11 +23,13 @@ import {
   LanguageSelector,
 } from '../components';
 import { ThemeType, LanguageType } from '../types';
+import i18n from '../i18n';
 
 export const ConfiguracoesScreen: React.FC = () => {
   const { colors, theme, setTheme } = useTheme();
   const { user, updateUser, setNextConfessionDate } = useUser();
   const { resetPin } = useAuth();
+  const { t } = useLanguage();
   const navigation = useNavigation();
 
   const [name, setName] = useState(user?.name || '');
@@ -45,6 +48,7 @@ export const ConfiguracoesScreen: React.FC = () => {
 
   const handleLanguageChange = async (newLanguage: LanguageType) => {
     setSelectedLanguage(newLanguage);
+    i18n.locale = newLanguage;
     await updateUser({ language: newLanguage });
   };
 
@@ -55,12 +59,12 @@ export const ConfiguracoesScreen: React.FC = () => {
 
     if (newPin && newPin.length === 4) {
       await resetPin(newPin);
-      Alert.alert('Sucesso', 'PIN atualizado com sucesso!');
+      Alert.alert(t('common.success'), t('settings.pinUpdated'));
       setCurrentPin('');
       setNewPin('');
     }
 
-    Alert.alert('Sucesso', 'Configurações salvas!');
+    Alert.alert(t('common.success'), t('settings.saved'));
   };
 
   return (
@@ -74,7 +78,7 @@ export const ConfiguracoesScreen: React.FC = () => {
           <Ionicons name="arrow-back" size={24} color={colors.textOnPrimary} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.textOnPrimary }]}>
-          Configurações
+          {t('settings.title')}
         </Text>
         <View style={styles.placeholder} />
       </View>
@@ -91,7 +95,7 @@ export const ConfiguracoesScreen: React.FC = () => {
           <View style={styles.inputRow}>
             <Ionicons name="person-outline" size={24} color={colors.textLight} />
             <View style={styles.inputContainer}>
-              <Text style={[styles.label, { color: colors.textLight }]}>Nome</Text>
+              <Text style={[styles.label, { color: colors.textLight }]}>{t('settings.name')}</Text>
               <TextInput
                 style={[
                   styles.input,
@@ -99,7 +103,7 @@ export const ConfiguracoesScreen: React.FC = () => {
                 ]}
                 value={name}
                 onChangeText={setName}
-                placeholder="Seu nome"
+                placeholder={t('settings.namePlaceholder')}
                 placeholderTextColor={colors.textLight}
               />
             </View>
@@ -113,7 +117,7 @@ export const ConfiguracoesScreen: React.FC = () => {
               <Text style={styles.pinIconText}>PIN</Text>
             </View>
             <View style={styles.inputContainer}>
-              <Text style={[styles.label, { color: colors.textLight }]}>Senha</Text>
+              <Text style={[styles.label, { color: colors.textLight }]}>{t('settings.password')}</Text>
               <TextInput
                 style={[
                   styles.input,
@@ -121,7 +125,7 @@ export const ConfiguracoesScreen: React.FC = () => {
                 ]}
                 value={currentPin}
                 onChangeText={setCurrentPin}
-                placeholder="Senha atual"
+                placeholder={t('settings.currentPassword')}
                 placeholderTextColor={colors.textLight}
                 secureTextEntry
                 maxLength={4}
@@ -137,7 +141,7 @@ export const ConfiguracoesScreen: React.FC = () => {
               <Text style={styles.pinIconText}>PIN</Text>
             </View>
             <View style={styles.inputContainer}>
-              <Text style={[styles.label, { color: colors.textLight }]}>Nova Senha</Text>
+              <Text style={[styles.label, { color: colors.textLight }]}>{t('settings.newPassword')}</Text>
               <TextInput
                 style={[
                   styles.input,
@@ -145,7 +149,7 @@ export const ConfiguracoesScreen: React.FC = () => {
                 ]}
                 value={newPin}
                 onChangeText={setNewPin}
-                placeholder="Nova senha (4 dígitos)"
+                placeholder={t('settings.newPasswordPlaceholder')}
                 placeholderTextColor={colors.textLight}
                 secureTextEntry
                 maxLength={4}
@@ -158,7 +162,7 @@ export const ConfiguracoesScreen: React.FC = () => {
         {/* Temas */}
         <View style={styles.themeSection}>
           <ThemeSelector
-            label="Temas:"
+            label={t('settings.themes')}
             selected={selectedTheme}
             onSelect={handleThemeChange}
           />
@@ -167,7 +171,7 @@ export const ConfiguracoesScreen: React.FC = () => {
         {/* Idiomas */}
         <View style={styles.themeSection}>
           <LanguageSelector
-            label="Idiomas:"
+            label={t('settings.languages')}
             selected={selectedLanguage}
             onSelect={handleLanguageChange}
           />
@@ -175,7 +179,7 @@ export const ConfiguracoesScreen: React.FC = () => {
 
         {/* Botão Salvar */}
         <CustomButton
-          title="ATUALIZAR"
+          title={t('settings.update')}
           onPress={handleSave}
           style={styles.saveButton}
         />

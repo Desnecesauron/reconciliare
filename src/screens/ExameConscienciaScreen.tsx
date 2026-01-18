@@ -1,6 +1,6 @@
 // Tela de Exame de Consciência
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -12,17 +12,31 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
 import { useUser } from '../contexts/UserContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { ChecklistItem } from '../components';
-import { exameCategorias } from '../data/exameConsciencia';
 import { ExamCategory, ExamSin } from '../types';
 
 export const ExameConscienciaScreen: React.FC = () => {
   const { colors } = useTheme();
   const { saveExam, loadExam, addSin, removeSin, mySins, examState } = useUser();
+  const { t, language } = useLanguage();
   const navigation = useNavigation();
 
   const [categories, setCategories] = useState<ExamCategory[]>([]);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+
+  // Gerar categorias do exame a partir das traduções
+  const exameCategorias = useMemo((): ExamCategory[] => {
+    const categoriesData = t('examCategories') as unknown as Record<string, { name: string; sins: Array<{ id: string; description: string }> }>;
+    return Object.entries(categoriesData).map(([key, value]) => ({
+      id: key,
+      name: value.name,
+      sins: value.sins.map((sin) => ({
+        ...sin,
+        checked: false,
+      })),
+    }));
+  }, [language]);
 
   useEffect(() => {
     initializeExam();
@@ -42,7 +56,7 @@ export const ExameConscienciaScreen: React.FC = () => {
     } else if (examState) {
       setCategories(examState);
     }
-  }, [examState]);
+  }, [examState, exameCategorias]);
 
   const initializeExam = async () => {
     const savedExam = await loadExam();
@@ -162,7 +176,7 @@ export const ExameConscienciaScreen: React.FC = () => {
           <Ionicons name="arrow-back" size={24} color={colors.textOnPrimary} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.textOnPrimary }]}>
-          Exame de Consciência
+          {t('exam.title')}
         </Text>
         <View style={styles.headerActions}>
           <TouchableOpacity

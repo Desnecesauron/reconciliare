@@ -6,16 +6,18 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
 import { useUser } from '../contexts/UserContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { EmptyState } from '../components';
 
 export const HistoricoScreen: React.FC = () => {
   const { colors } = useTheme();
   const { confessions } = useUser();
+  const { t, getLocale } = useLanguage();
   const navigation = useNavigation();
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
+    return date.toLocaleDateString(getLocale(), {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -25,7 +27,7 @@ export const HistoricoScreen: React.FC = () => {
   const renderConfessionItem = ({ item }: { item: typeof confessions[0] }) => (
     <View style={[styles.confessionItem, { borderBottomColor: colors.border }]}>
       <Text style={[styles.confessionText, { color: colors.text }]}>
-        {formatDate(item.date)} - {item.sinsCount} pecado{item.sinsCount !== 1 ? 's' : ''} perdoado{item.sinsCount !== 1 ? 's' : ''}
+        {formatDate(item.date)} - {item.sinsCount} {item.sinsCount !== 1 ? t('history.sinsForgiven') : t('history.sinForgiven')}
       </Text>
     </View>
   );
@@ -41,14 +43,14 @@ export const HistoricoScreen: React.FC = () => {
           <Ionicons name="arrow-back" size={24} color={colors.textOnPrimary} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.textOnPrimary }]}>
-          Meu Histórico
+          {t('history.title')}
         </Text>
         <View style={styles.placeholder} />
       </View>
 
       {confessions.length === 0 ? (
         <EmptyState
-          message="Nenhuma confissão registrada ainda"
+          message={t('history.empty')}
           icon="calendar-outline"
         />
       ) : (

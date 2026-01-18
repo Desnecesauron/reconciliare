@@ -6,7 +6,8 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Markdown from 'react-native-markdown-display';
 import { useTheme } from '../contexts/ThemeContext';
-import { artigos } from '../data/preparacao';
+import { useLanguage } from '../contexts/LanguageContext';
+import { Article } from '../types';
 
 type RouteParams = {
   PreparacaoArtigo: {
@@ -16,11 +17,24 @@ type RouteParams = {
 
 export const PreparacaoArtigoScreen: React.FC = () => {
   const { colors } = useTheme();
+  const { t, language } = useLanguage();
   const navigation = useNavigation();
   const route = useRoute<RouteProp<RouteParams, 'PreparacaoArtigo'>>();
 
   const articleId = route.params?.articleId;
-  const article = artigos.find((a) => a.id === articleId);
+
+  // Obter artigo traduzido
+  const article = useMemo((): Article | undefined => {
+    const articlesData = t('articles') as unknown as Record<string, { title: string; content: string; source?: string }>;
+    const articleData = articlesData[articleId];
+    if (!articleData) return undefined;
+    return {
+      id: articleId,
+      title: articleData.title,
+      content: articleData.content,
+      source: articleData.source,
+    };
+  }, [articleId, language]);
 
   const markdownStyles = useMemo(() => ({
     body: {
@@ -88,7 +102,7 @@ export const PreparacaoArtigoScreen: React.FC = () => {
   if (!article) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <Text style={{ color: colors.text }}>Artigo não encontrado</Text>
+        <Text style={{ color: colors.text }}>{t('article.notFound')}</Text>
       </View>
     );
   }
@@ -104,7 +118,7 @@ export const PreparacaoArtigoScreen: React.FC = () => {
           <Ionicons name="arrow-back" size={24} color={colors.textOnPrimary} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.textOnPrimary }]}>
-          Preparação
+          {t('nav.preparation')}
         </Text>
         <View style={styles.placeholder} />
       </View>
@@ -128,7 +142,7 @@ export const PreparacaoArtigoScreen: React.FC = () => {
         {/* Fonte */}
         {article.source && (
           <Text style={[styles.source, { color: colors.textLight }]}>
-            Fonte: {article.source}
+            {t('common.source')}: {article.source}
           </Text>
         )}
       </ScrollView>

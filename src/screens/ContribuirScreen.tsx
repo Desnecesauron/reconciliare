@@ -5,10 +5,12 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'r
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { CustomButton } from '../components';
 
 export const ContribuirScreen: React.FC = () => {
   const { colors } = useTheme();
+  const { t } = useLanguage();
   const navigation = useNavigation();
 
   const handleDonate = () => {
@@ -27,7 +29,7 @@ export const ContribuirScreen: React.FC = () => {
           <Ionicons name="arrow-back" size={24} color={colors.textOnPrimary} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.textOnPrimary }]}>
-          Contribuir
+          {t('contribute.title')}
         </Text>
         <View style={styles.placeholder} />
       </View>
@@ -37,27 +39,27 @@ export const ContribuirScreen: React.FC = () => {
         contentContainerStyle={styles.contentContainer}
       >
         <Text style={[styles.text, { color: colors.text }]}>
-          Muito obrigado por usar o app RECONCILIARE! Esperamos que isto possa ajudar nas suas confissões.
+          {t('contribute.text1')}
         </Text>
 
         <Text style={[styles.text, { color: colors.text }]}>
-          Se você deseja contribuir com alguma doação para ajudar a manter este projeto, clique no botão abaixo.
+          {t('contribute.text2')}
         </Text>
 
         <Text style={[styles.text, { color: colors.text }]}>
-          Sua contribuição ajuda a manter o aplicativo gratuito e disponível para todos os católicos que desejam viver uma vida de oração e reconciliação com Deus.
+          {t('contribute.text3')}
         </Text>
 
         <View style={styles.buttonsContainer}>
           <CustomButton
-            title="QUERO FAZER UMA DOAÇÃO"
+            title={t('contribute.donateButton')}
             onPress={handleDonate}
             style={styles.button}
           />
         </View>
 
         <Text style={[styles.thankYou, { color: colors.textLight }]}>
-          Que Deus abençoe você e sua família!
+          {t('contribute.thankYou')}
         </Text>
       </ScrollView>
     </View>

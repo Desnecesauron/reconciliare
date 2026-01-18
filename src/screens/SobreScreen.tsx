@@ -5,9 +5,11 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export const SobreScreen: React.FC = () => {
   const { colors } = useTheme();
+  const { t } = useLanguage();
   const navigation = useNavigation();
 
   return (
@@ -21,7 +23,7 @@ export const SobreScreen: React.FC = () => {
           <Ionicons name="arrow-back" size={24} color={colors.textOnPrimary} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.textOnPrimary }]}>
-          Sobre
+          {t('about.title')}
         </Text>
         <View style={styles.placeholder} />
       </View>
@@ -31,24 +33,24 @@ export const SobreScreen: React.FC = () => {
         contentContainerStyle={styles.contentContainer}
       >
         <Text style={[styles.text, { color: colors.text }]}>
-          RECONCILIARE vem do latim e significa "reconciliar", "restabelecer a paz", "voltar à amizade". É exatamente isso que o sacramento da Reconciliação nos proporciona: a oportunidade de nos reconciliarmos com Deus e com a Igreja.
+          {t('about.text1')}
         </Text>
 
         <Text style={[styles.text, { color: colors.text }]}>
-          Jesus, com a sua infinita bondade, instituiu o sacramento da reconciliação nos presenteando com a Sua Misericórdia Divina. Por meio deste sacramento, podemos receber o perdão dos nossos pecados e a graça de recomeçar.
+          {t('about.text2')}
         </Text>
 
         <Text style={[styles.text, { color: colors.text }]}>
-          O aplicativo RECONCILIARE foi desenvolvido para ajudar todos os católicos a elaborarem o seu exame de consciência antes da confissão. Ele foi projetado para ser simples e fácil de ser usado, ajudando você a lembrar seus pecados de modo a fazer uma boa confissão.
+          {t('about.text3')}
         </Text>
 
         <Text style={[styles.text, { color: colors.text }]}>
-          Que Deus abençoe você e sua família!
+          {t('about.text4')}
         </Text>
 
         <View style={styles.versionContainer}>
           <Text style={[styles.version, { color: colors.textLight }]}>
-            Versão 1.0.0
+            {t('about.version')} 1.0.0
           </Text>
         </View>
       </ScrollView>

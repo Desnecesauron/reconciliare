@@ -1,6 +1,6 @@
 // Conteúdo personalizado do Drawer
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import {
   DrawerContentScrollView,
@@ -10,31 +10,38 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
 import { useUser } from '../contexts/UserContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { Avatar } from '../components';
 
 interface MenuItem {
-  name: string;
+  nameKey: string;
   icon: keyof typeof Ionicons.glyphMap;
   route: string;
   section?: 'main' | 'secondary';
 }
 
-const menuItems: MenuItem[] = [
-  { name: 'Minhas Confissões', icon: 'home-outline', route: 'Dashboard', section: 'main' },
-  { name: 'Exame de Consciência', icon: 'clipboard-outline', route: 'ExameConsciencia', section: 'main' },
-  { name: 'Meus Pecados', icon: 'document-outline', route: 'MeusPecados', section: 'main' },
-  { name: 'Orações', icon: 'book-outline', route: 'Oracoes', section: 'main' },
-  { name: 'Preparação', icon: 'bookmark-outline', route: 'Preparacao', section: 'main' },
-  { name: 'Configurações', icon: 'settings-outline', route: 'Configuracoes', section: 'secondary' },
-  { name: 'Contribuir', icon: 'thumbs-up-outline', route: 'Contribuir', section: 'secondary' },
-  { name: 'Ajuda', icon: 'help-circle-outline', route: 'Ajuda', section: 'secondary' },
-  { name: 'Sobre', icon: 'information-circle-outline', route: 'Sobre', section: 'secondary' },
+const menuItemsConfig: MenuItem[] = [
+  { nameKey: 'nav.myConfessions', icon: 'home-outline', route: 'Dashboard', section: 'main' },
+  { nameKey: 'nav.examConscience', icon: 'clipboard-outline', route: 'ExameConsciencia', section: 'main' },
+  { nameKey: 'nav.mySins', icon: 'document-outline', route: 'MeusPecados', section: 'main' },
+  { nameKey: 'nav.prayers', icon: 'book-outline', route: 'Oracoes', section: 'main' },
+  { nameKey: 'nav.preparation', icon: 'bookmark-outline', route: 'Preparacao', section: 'main' },
+  { nameKey: 'nav.settings', icon: 'settings-outline', route: 'Configuracoes', section: 'secondary' },
+  { nameKey: 'nav.contribute', icon: 'thumbs-up-outline', route: 'Contribuir', section: 'secondary' },
+  { nameKey: 'nav.help', icon: 'help-circle-outline', route: 'Ajuda', section: 'secondary' },
+  { nameKey: 'nav.about', icon: 'information-circle-outline', route: 'Sobre', section: 'secondary' },
 ];
 
 export const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
   const { colors } = useTheme();
   const { user } = useUser();
   const { logout } = useAuth();
+  const { t } = useLanguage();
+
+  const menuItems = useMemo(() => menuItemsConfig.map(item => ({
+    ...item,
+    name: t(item.nameKey),
+  })), [t]);
 
   const navigateTo = (route: string) => {
     props.navigation.navigate(route);
@@ -49,7 +56,7 @@ export const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
       <View style={[styles.header, { backgroundColor: colors.primary }]}>
         <Avatar size={70} name={user?.name} />
         <Text style={[styles.userName, { color: colors.textOnPrimary }]}>
-          {user?.name || 'Usuário'}
+          {user?.name || t('common.user')}
         </Text>
         <Text style={[styles.xpText, { color: colors.xpColor }]}>
           {user?.xp || 0}xp
@@ -95,7 +102,7 @@ export const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
         >
           <Ionicons name="log-out-outline" size={24} color={colors.error} />
           <Text style={[styles.menuText, { color: colors.error }]}>
-            Sair
+            {t('nav.logout')}
           </Text>
         </TouchableOpacity>
       </ScrollView>
