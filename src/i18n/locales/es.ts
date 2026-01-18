@@ -64,6 +64,10 @@ export default {
     forgotPinMessage: 'Para restablecer tu PIN, todos tus datos serán eliminados. ¿Deseas continuar?',
     reset: 'Restablecer',
     resetSuccess: 'Tus datos han sido eliminados. Puedes crear una nueva cuenta.',
+    // Importar backup en registro
+    haveBackup: '¿Ya tienes un backup?',
+    restoreBackup: 'Restaurar Backup',
+    restoreSuccess: '¡Datos restaurados con éxito!',
   },
 
   // Dashboard
@@ -129,6 +133,22 @@ export default {
     update: 'ACTUALIZAR',
     pinUpdated: '¡PIN actualizado con éxito!',
     saved: '¡Configuración guardada!',
+    // Backup
+    backup: 'Copia de seguridad',
+    exportData: 'Exportar Datos',
+    importData: 'Importar Datos',
+    exportDescription: 'Crear copia de seguridad cifrada de tus datos',
+    importDescription: 'Restaurar datos de una copia de seguridad anterior',
+    exportSuccess: '¡Copia de seguridad exportada con éxito!',
+    importSuccess: '¡Datos restaurados con éxito! Reinicia la app para aplicar los cambios.',
+    importErrorFormat: 'Archivo de copia de seguridad inválido. Verifica que seleccionaste el archivo correcto.',
+    importErrorPassword: 'PIN incorrecto. Usa el mismo PIN usado para crear la copia de seguridad.',
+    importErrorUnknown: 'Error al importar la copia de seguridad. Inténtalo de nuevo.',
+    importErrorExtension: 'Archivo inválido. Selecciona un archivo .rcl generado por Reconciliare.',
+    enterPinToExport: 'Ingresa tu PIN para crear la copia de seguridad:',
+    enterPinToImport: 'Ingresa el PIN usado para crear esta copia de seguridad:',
+    selectBackupFile: 'Selecciona el archivo de copia de seguridad',
+    noFileSelected: 'Ningún archivo seleccionado',
   },
 
   // Contribuir
@@ -292,7 +312,7 @@ Oremos: Infunde, Señor, tu gracia en nuestras almas, para que los que hemos con
         { id: 'p4-3', description: '¿Me avergoncé de mis padres?' },
         { id: 'p4-4', description: '¿Descuidé la educación de mis hijos?' },
         { id: 'p4-5', description: '¿Fui mal ejemplo para mis hijos o dependientes?' },
-        { id: 'p4-6', description: '¿Irrespeté a mis superiores legítimos?' },
+        { id: 'p4-6', description: '¿Irrespeté a mis superiores legítimos (profesores, jefes, autoridades)?' },
       ],
     },
     fifthCommandment: {

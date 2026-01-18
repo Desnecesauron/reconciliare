@@ -1,6 +1,6 @@
 // Componente de entrada de PIN
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -30,6 +30,16 @@ export const PinInput: React.FC<PinInputProps> = ({
   const { colors } = useTheme();
   const inputRef = useRef<TextInput>(null);
 
+  // Foco automático com delay para funcionar em modais
+  useEffect(() => {
+    if (autoFocus) {
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [autoFocus]);
+
   const handleChange = (text: string) => {
     const numericValue = text.replace(/[^0-9]/g, '').slice(0, length);
     onChange(numericValue);
@@ -40,11 +50,11 @@ export const PinInput: React.FC<PinInputProps> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={handleFocus}>
       {label && (
         <Text style={[styles.label, { color: colors.textLight }]}>{label}</Text>
       )}
-      <Pressable style={styles.dotsContainer} onPress={handleFocus}>
+      <View style={styles.dotsContainer}>
         {Array.from({ length }).map((_, index) => (
           <View
             key={index}
@@ -57,7 +67,7 @@ export const PinInput: React.FC<PinInputProps> = ({
             ]}
           />
         ))}
-      </Pressable>
+      </View>
       <TextInput
         ref={inputRef}
         style={styles.hiddenInput}
@@ -66,12 +76,12 @@ export const PinInput: React.FC<PinInputProps> = ({
         keyboardType="numeric"
         maxLength={length}
         secureTextEntry
-        autoFocus={autoFocus}
+        caretHidden
       />
       {error && (
         <Text style={[styles.error, { color: colors.error }]}>{error}</Text>
       )}
-    </View>
+    </Pressable>
   );
 };
 
@@ -79,6 +89,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     width: '100%',
+    paddingVertical: 16,
   },
   label: {
     fontSize: 14,
@@ -88,6 +99,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 16,
+    paddingHorizontal: 40,
+    paddingVertical: 12,
   },
   dot: {
     width: 20,
@@ -97,9 +110,11 @@ const styles = StyleSheet.create({
   },
   hiddenInput: {
     position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     opacity: 0,
-    height: 0,
-    width: 0,
   },
   error: {
     fontSize: 12,

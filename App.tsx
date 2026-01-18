@@ -1,5 +1,8 @@
 // App principal do Reconciliare
 
+// Polyfill para crypto.getRandomValues (necessário para crypto-js)
+import 'react-native-get-random-values';
+
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';

@@ -9,6 +9,7 @@ interface AuthContextData {
   isLoading: boolean;
   login: (pin: string) => Promise<boolean>;
   register: (pin: string) => Promise<void>;
+  registerFromBackup: (pin: string) => Promise<void>;
   logout: () => void;
   resetPin: (newPin: string) => Promise<void>;
   clearAll: () => Promise<void>;
@@ -56,6 +57,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsAuthenticated(true);
   };
 
+  // Registra usuário após importação de backup (usa o PIN do backup)
+  const registerFromBackup = async (pin: string): Promise<void> => {
+    await savePin(pin);
+    await setIsRegistered(true);
+    setIsRegisteredState(true);
+    setIsAuthenticated(true);
+  };
+
   const logout = () => {
     setIsAuthenticated(false);
   };
@@ -78,6 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         isLoading,
         login,
         register,
+        registerFromBackup,
         logout,
         resetPin,
         clearAll,

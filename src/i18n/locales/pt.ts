@@ -64,6 +64,10 @@ export default {
     forgotPinMessage: 'Para redefinir seu PIN, todos os seus dados serão apagados. Deseja continuar?',
     reset: 'Redefinir',
     resetSuccess: 'Seus dados foram apagados. Você pode criar uma nova conta.',
+    // Importar backup no cadastro
+    haveBackup: 'Já tem um backup?',
+    restoreBackup: 'Restaurar Backup',
+    restoreSuccess: 'Dados restaurados com sucesso!',
   },
 
   // Dashboard
@@ -129,6 +133,22 @@ export default {
     update: 'ATUALIZAR',
     pinUpdated: 'PIN atualizado com sucesso!',
     saved: 'Configurações salvas!',
+    // Backup
+    backup: 'Backup',
+    exportData: 'Exportar Dados',
+    importData: 'Importar Dados',
+    exportDescription: 'Criar backup criptografado dos seus dados',
+    importDescription: 'Restaurar dados de um backup anterior',
+    exportSuccess: 'Backup exportado com sucesso!',
+    importSuccess: 'Dados restaurados com sucesso! Reinicie o app para aplicar as alterações.',
+    importErrorFormat: 'Arquivo de backup inválido. Verifique se selecionou o arquivo correto.',
+    importErrorPassword: 'PIN incorreto. Use o mesmo PIN usado para criar o backup.',
+    importErrorExtension: 'Arquivo inválido. Selecione um arquivo .rcl gerado pelo Reconciliare.',
+    importErrorUnknown: 'Erro ao importar backup. Tente novamente.',
+    enterPinToExport: 'Digite seu PIN para criar o backup:',
+    enterPinToImport: 'Digite o PIN usado para criar este backup:',
+    selectBackupFile: 'Selecione o arquivo de backup',
+    noFileSelected: 'Nenhum arquivo selecionado',
   },
 
   // Contribuir
@@ -292,7 +312,7 @@ Oremos: Infundi, Senhor, a Vossa graça em nossas almas, para que nós, que pela
         { id: 'p4-3', description: 'Envergonhei-me dos meus pais?' },
         { id: 'p4-4', description: 'Descuidei da educação dos meus filhos?' },
         { id: 'p4-5', description: 'Fui mau exemplo para meus filhos ou dependentes?' },
-        { id: 'p4-6', description: 'Desrespeitei meus superiores legítimos?' },
+        { id: 'p4-6', description: 'Desrespeitei meus superiores legítimos (professores, chefes, autoridades)?' },
       ],
     },
     fifthCommandment: {

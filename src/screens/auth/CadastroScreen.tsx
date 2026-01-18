@@ -10,7 +10,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Modal,
+  TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUser } from '../../contexts/UserContext';
@@ -24,10 +28,15 @@ import {
 } from '../../components';
 import { ThemeType, LanguageType } from '../../types';
 import i18n from '../../i18n';
+import {
+  selectBackupFile,
+  validateBackupFormat,
+  importBackup,
+} from '../../services/backup';
 
 export const CadastroScreen: React.FC = () => {
   const { colors, setTheme } = useTheme();
-  const { register } = useAuth();
+  const { register, registerFromBackup } = useAuth();
   const { createUser } = useUser();
   const { t } = useLanguage();
 
@@ -38,6 +47,12 @@ export const CadastroScreen: React.FC = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageType>('pt');
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+
+  // Estados para importar backup
+  const [importModalVisible, setImportModalVisible] = useState(false);
+  const [importPin, setImportPin] = useState('');
+  const [backupContent, setBackupContent] = useState<string | null>(null);
+  const [importLoading, setImportLoading] = useState(false);
 
   const handleThemeChange = (theme: ThemeType) => {
     setSelectedTheme(theme);
@@ -80,6 +95,68 @@ export const CadastroScreen: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Funções de importação de backup
+  const handleImportPress = async () => {
+    try {
+      const result = await selectBackupFile();
+      if (!result) return;
+
+      if ('error' in result) {
+        if (result.error === 'invalid_extension') {
+          Alert.alert(t('common.error'), t('settings.importErrorExtension'));
+          return;
+        }
+      }
+
+      const { content } = result;
+      const backup = validateBackupFormat(content);
+      if (!backup) {
+        Alert.alert(t('common.error'), t('settings.importErrorFormat'));
+        return;
+      }
+
+      setBackupContent(content);
+      setImportPin('');
+      setImportModalVisible(true);
+    } catch (error) {
+      Alert.alert(t('common.error'), t('settings.importErrorUnknown'));
+    }
+  };
+
+  const handleImportConfirm = async () => {
+    if (importPin.length !== 4 || !backupContent) return;
+
+    setImportLoading(true);
+    try {
+      const result = await importBackup(backupContent, importPin);
+      setImportModalVisible(false);
+
+      if (result.success) {
+        // Registra o usuário com o PIN do backup e autentica
+        await registerFromBackup(importPin);
+        Alert.alert(t('common.success'), t('auth.restoreSuccess'));
+      } else if (result.error === 'wrong_password') {
+        Alert.alert(t('common.error'), t('settings.importErrorPassword'));
+      } else if (result.error === 'invalid_format') {
+        Alert.alert(t('common.error'), t('settings.importErrorFormat'));
+      } else {
+        Alert.alert(t('common.error'), t('settings.importErrorUnknown'));
+      }
+    } catch (error) {
+      Alert.alert(t('common.error'), t('settings.importErrorUnknown'));
+    } finally {
+      setImportLoading(false);
+      setImportPin('');
+      setBackupContent(null);
+    }
+  };
+
+  const handleImportCancel = () => {
+    setImportModalVisible(false);
+    setImportPin('');
+    setBackupContent(null);
   };
 
   return (
@@ -181,7 +258,77 @@ export const CadastroScreen: React.FC = () => {
             style={styles.backButton}
           />
         )}
+
+        {/* Opção de importar backup */}
+        {step === 1 && (
+          <View style={styles.importSection}>
+            <Text style={[styles.importLabel, { color: colors.textLight }]}>
+              {t('auth.haveBackup')}
+            </Text>
+            <TouchableOpacity
+              style={[styles.importButton, { borderColor: colors.primary }]}
+              onPress={handleImportPress}
+            >
+              <Ionicons name="cloud-download-outline" size={20} color={colors.primary} />
+              <Text style={[styles.importButtonText, { color: colors.primary }]}>
+                {t('auth.restoreBackup')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
+
+      {/* Modal de PIN para importar */}
+      <Modal
+        visible={importModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={handleImportCancel}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>
+              {t('settings.enterPinToImport')}
+            </Text>
+
+            <View style={styles.pinInputContainer}>
+              <PinInput
+                value={importPin}
+                onChange={setImportPin}
+                autoFocus
+              />
+            </View>
+
+            {importLoading ? (
+              <ActivityIndicator size="large" color={colors.primary} style={styles.loader} />
+            ) : (
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.cancelButton, { borderColor: colors.border }]}
+                  onPress={handleImportCancel}
+                >
+                  <Text style={[styles.modalButtonText, { color: colors.textLight }]}>
+                    {t('common.cancel')}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.modalButton,
+                    styles.confirmButton,
+                    { backgroundColor: importPin.length === 4 ? colors.primary : colors.border },
+                  ]}
+                  onPress={handleImportConfirm}
+                  disabled={importPin.length !== 4}
+                >
+                  <Text style={[styles.modalButtonText, { color: '#FFFFFF' }]}>
+                    {t('common.confirm')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 };
@@ -250,5 +397,73 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginBottom: 12,
     textAlign: 'center',
+  },
+  // Estilos para importação
+  importSection: {
+    marginTop: 40,
+    paddingTop: 24,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0,0,0,0.1)',
+    alignItems: 'center',
+  },
+  importLabel: {
+    fontSize: 14,
+    marginBottom: 12,
+  },
+  importButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderWidth: 1,
+    borderRadius: 8,
+    gap: 8,
+  },
+  importButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  // Estilos do modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  modalContent: {
+    width: '100%',
+    borderRadius: 12,
+    padding: 24,
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  pinInputContainer: {
+    marginBottom: 24,
+  },
+  loader: {
+    marginVertical: 20,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  modalButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  cancelButton: {
+    borderWidth: 1,
+  },
+  confirmButton: {},
+  modalButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
