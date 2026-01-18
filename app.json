@@ -22,7 +22,11 @@
         "backgroundColor": "#8B2F97"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.reconciliare.app"
+      "package": "com.reconciliare.app",
+      "permissions": [
+        "android.permission.READ_CALENDAR",
+        "android.permission.WRITE_CALENDAR"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -36,6 +40,12 @@
         }
       ],
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "1d0b5a58-35ce-4db4-9512-41099e9329e8"
+      }
+    },
+    "owner": "desnecesauron"
   }
 }
