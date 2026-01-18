@@ -1,8 +1,9 @@
-// Serviço de armazenamento local
+// Serviço de armazenamento local com criptografia
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import { User, Confession, ExamCategory, Sin } from '../types';
+import { getOrCreateEncryptionKey, encrypt, decrypt, clearEncryptionKey } from './encryption';
 
 const KEYS = {
   USER: '@reconciliare:user',
@@ -16,7 +17,39 @@ const KEYS = {
   IS_REGISTERED: '@reconciliare:is_registered',
 };
 
-// Funções para PIN (armazenamento seguro)
+// Cache da chave de criptografia para evitar múltiplas leituras do SecureStore
+let encryptionKeyCache: string | null = null;
+
+const getKey = async (): Promise<string> => {
+  if (!encryptionKeyCache) {
+    encryptionKeyCache = await getOrCreateEncryptionKey();
+  }
+  return encryptionKeyCache;
+};
+
+// Salva dado criptografado
+const saveEncrypted = async (key: string, value: string): Promise<void> => {
+  const encryptionKey = await getKey();
+  const encryptedValue = encrypt(value, encryptionKey);
+  await AsyncStorage.setItem(key, encryptedValue);
+};
+
+// Carrega dado criptografado
+const loadEncrypted = async (key: string): Promise<string | null> => {
+  const encryptedValue = await AsyncStorage.getItem(key);
+  if (!encryptedValue) return null;
+
+  try {
+    const encryptionKey = await getKey();
+    return decrypt(encryptedValue, encryptionKey);
+  } catch (error) {
+    // Se falhar ao descriptografar (dados antigos não criptografados), retorna null
+    console.warn('Falha ao descriptografar dados, podem ser dados antigos:', key);
+    return null;
+  }
+};
+
+// Funções para PIN (armazenamento seguro nativo)
 export const savePin = async (pin: string): Promise<void> => {
   await SecureStore.setItemAsync(KEYS.PIN, pin);
 };
@@ -29,13 +62,13 @@ export const deletePin = async (): Promise<void> => {
   await SecureStore.deleteItemAsync(KEYS.PIN);
 };
 
-// Funções para User
+// Funções para User (CRIPTOGRAFADO)
 export const saveUser = async (user: User): Promise<void> => {
-  await AsyncStorage.setItem(KEYS.USER, JSON.stringify(user));
+  await saveEncrypted(KEYS.USER, JSON.stringify(user));
 };
 
 export const getUser = async (): Promise<User | null> => {
-  const data = await AsyncStorage.getItem(KEYS.USER);
+  const data = await loadEncrypted(KEYS.USER);
   return data ? JSON.parse(data) : null;
 };
 
@@ -43,23 +76,23 @@ export const deleteUser = async (): Promise<void> => {
   await AsyncStorage.removeItem(KEYS.USER);
 };
 
-// Funções para Confissões
+// Funções para Confissões (CRIPTOGRAFADO)
 export const saveConfessions = async (confessions: Confession[]): Promise<void> => {
-  await AsyncStorage.setItem(KEYS.CONFESSIONS, JSON.stringify(confessions));
+  await saveEncrypted(KEYS.CONFESSIONS, JSON.stringify(confessions));
 };
 
 export const getConfessions = async (): Promise<Confession[]> => {
-  const data = await AsyncStorage.getItem(KEYS.CONFESSIONS);
+  const data = await loadEncrypted(KEYS.CONFESSIONS);
   return data ? JSON.parse(data) : [];
 };
 
-// Funções para Estado do Exame
+// Funções para Estado do Exame (CRIPTOGRAFADO)
 export const saveExamState = async (exam: ExamCategory[]): Promise<void> => {
-  await AsyncStorage.setItem(KEYS.EXAM_STATE, JSON.stringify(exam));
+  await saveEncrypted(KEYS.EXAM_STATE, JSON.stringify(exam));
 };
 
 export const getExamState = async (): Promise<ExamCategory[] | null> => {
-  const data = await AsyncStorage.getItem(KEYS.EXAM_STATE);
+  const data = await loadEncrypted(KEYS.EXAM_STATE);
   return data ? JSON.parse(data) : null;
 };
 
@@ -67,13 +100,13 @@ export const clearExamState = async (): Promise<void> => {
   await AsyncStorage.removeItem(KEYS.EXAM_STATE);
 };
 
-// Funções para Meus Pecados
+// Funções para Meus Pecados (CRIPTOGRAFADO)
 export const saveMySins = async (sins: Sin[]): Promise<void> => {
-  await AsyncStorage.setItem(KEYS.MY_SINS, JSON.stringify(sins));
+  await saveEncrypted(KEYS.MY_SINS, JSON.stringify(sins));
 };
 
 export const getMySins = async (): Promise<Sin[]> => {
-  const data = await AsyncStorage.getItem(KEYS.MY_SINS);
+  const data = await loadEncrypted(KEYS.MY_SINS);
   return data ? JSON.parse(data) : [];
 };
 
@@ -81,7 +114,7 @@ export const clearMySins = async (): Promise<void> => {
   await AsyncStorage.removeItem(KEYS.MY_SINS);
 };
 
-// Funções para datas de confissão
+// Funções para datas de confissão (não sensível)
 export const saveLastConfession = async (date: string): Promise<void> => {
   await AsyncStorage.setItem(KEYS.LAST_CONFESSION, date);
 };
@@ -98,7 +131,7 @@ export const getNextConfession = async (): Promise<string | null> => {
   return await AsyncStorage.getItem(KEYS.NEXT_CONFESSION);
 };
 
-// Funções para ID do evento do calendário
+// Funções para ID do evento do calendário (não sensível)
 export const saveCalendarEventId = async (eventId: string): Promise<void> => {
   await AsyncStorage.setItem(KEYS.CALENDAR_EVENT_ID, eventId);
 };
@@ -111,7 +144,7 @@ export const clearCalendarEventId = async (): Promise<void> => {
   await AsyncStorage.removeItem(KEYS.CALENDAR_EVENT_ID);
 };
 
-// Funções para registro
+// Funções para registro (não sensível)
 export const setIsRegistered = async (value: boolean): Promise<void> => {
   await AsyncStorage.setItem(KEYS.IS_REGISTERED, JSON.stringify(value));
 };
@@ -134,4 +167,6 @@ export const clearAllData = async (): Promise<void> => {
     KEYS.IS_REGISTERED,
   ]);
   await deletePin();
+  await clearEncryptionKey();
+  encryptionKeyCache = null;
 };
