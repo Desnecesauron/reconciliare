@@ -1,6 +1,6 @@
 // Tela de Configurações
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -33,9 +33,10 @@ import {
   validateBackupFormat,
   importBackup,
 } from '../services/backup';
+import { savePin, getPin } from '../services/storage';
 
 export const ConfiguracoesScreen: React.FC = () => {
-  const { colors, theme, setTheme } = useTheme();
+  const { colors, theme, setTheme, reloadTheme } = useTheme();
   const { user, updateUser, loadUserData } = useUser();
   const { resetPin } = useAuth();
   const { t } = useLanguage();
@@ -48,6 +49,15 @@ export const ConfiguracoesScreen: React.FC = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageType>(
     user?.language || 'pt'
   );
+
+  // Atualiza estados locais quando os dados do usuário mudam (ex: após import)
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setSelectedLanguage(user.language || 'pt');
+      setSelectedTheme(user.theme || 'purple');
+    }
+  }, [user]);
 
   // Estados para backup
   const [backupModalVisible, setBackupModalVisible] = useState(false);
@@ -125,6 +135,14 @@ export const ConfiguracoesScreen: React.FC = () => {
     setLoading(true);
     try {
       if (backupMode === 'export') {
+        // Valida se o PIN está correto antes de exportar
+        const storedPin = await getPin();
+        if (storedPin !== backupPin) {
+          Alert.alert(t('common.error'), t('auth.incorrectPin'));
+          setBackupPin('');
+          setLoading(false);
+          return;
+        }
         await exportBackup(backupPin);
         setBackupModalVisible(false);
         Alert.alert(t('common.success'), t('settings.exportSuccess'));
@@ -133,8 +151,12 @@ export const ConfiguracoesScreen: React.FC = () => {
         setBackupModalVisible(false);
 
         if (result.success) {
+          // Salva o novo PIN (do backup) para manter consistência com a chave de criptografia
+          await savePin(backupPin);
           // Recarrega os dados do usuário (a chave já foi configurada no importBackup)
           await loadUserData();
+          // Recarrega o tema
+          await reloadTheme();
           Alert.alert(t('common.success'), t('auth.restoreSuccess'));
         } else if (result.error === 'wrong_password') {
           Alert.alert(t('common.error'), t('settings.importErrorPassword'));

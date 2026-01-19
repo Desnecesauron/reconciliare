@@ -9,6 +9,8 @@ interface ThemeContextData {
   theme: ThemeType;
   colors: ThemeColors;
   setTheme: (theme: ThemeType) => Promise<void>;
+  reloadTheme: () => Promise<void>;
+  applyTheme: (theme: ThemeType) => void;
   resetTheme: () => void;
 }
 
@@ -34,6 +36,17 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     }
   };
 
+  // Recarrega o tema do storage (usado após import)
+  const reloadTheme = async () => {
+    await loadTheme();
+  };
+
+  // Aplica um tema diretamente (sem salvar no storage)
+  const applyTheme = (newTheme: ThemeType) => {
+    setThemeState(newTheme);
+    setColors(getTheme(newTheme));
+  };
+
   const setTheme = async (newTheme: ThemeType) => {
     setThemeState(newTheme);
     setColors(getTheme(newTheme));
@@ -51,7 +64,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, colors, setTheme, resetTheme }}>
+    <ThemeContext.Provider value={{ theme, colors, setTheme, reloadTheme, applyTheme, resetTheme }}>
       {children}
     </ThemeContext.Provider>
   );

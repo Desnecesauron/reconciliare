@@ -1,9 +1,10 @@
 // Context para gerenciamento de idioma e traduções
 
-import React, { createContext, useContext, useEffect, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
 import { LanguageType } from '../types';
 import i18n from '../i18n';
 import { useUser } from './UserContext';
+import { saveLanguage, getLanguage } from '../services/storage';
 
 interface LanguageContextData {
   language: LanguageType;
@@ -20,14 +21,32 @@ interface LanguageProviderProps {
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
   const { user, updateUser } = useUser();
-  const language = user?.language || 'pt';
+  const [storedLanguage, setStoredLanguage] = useState<LanguageType>('pt');
 
-  // Sincronizar idioma do i18n com preferência do usuário
+  // Carregar idioma do storage na inicialização (antes do login)
   useEffect(() => {
-    if (user?.language) {
+    const loadStoredLanguage = async () => {
+      const lang = await getLanguage();
+      if (lang) {
+        setStoredLanguage(lang as LanguageType);
+        i18n.locale = lang;
+      }
+    };
+    loadStoredLanguage();
+  }, []);
+
+  // Sincronizar com idioma do usuário quando disponível
+  useEffect(() => {
+    if (user?.language && user.language !== storedLanguage) {
+      setStoredLanguage(user.language);
       i18n.locale = user.language;
+      // Salva no storage separado para próxima inicialização
+      saveLanguage(user.language);
     }
   }, [user?.language]);
+
+  // Usar idioma do usuário se disponível, senão usar o armazenado
+  const language = user?.language || storedLanguage;
 
   // Função de tradução - depende de language para re-renderizar quando idioma mudar
   const t = useCallback((key: string, options?: Record<string, any>): string => {
@@ -37,6 +56,9 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   // Alterar idioma
   const setLanguage = useCallback(async (newLanguage: LanguageType) => {
     i18n.locale = newLanguage;
+    setStoredLanguage(newLanguage);
+    // Salva no storage separado
+    await saveLanguage(newLanguage);
     if (user) {
       await updateUser({ language: newLanguage });
     }

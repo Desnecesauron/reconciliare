@@ -18,6 +18,7 @@ import {
   getNextConfession,
   saveNextConfession,
   setEncryptionKeyFromPin,
+  saveLanguage,
 } from './storage';
 
 interface BackupData {
@@ -217,6 +218,10 @@ export const importBackup = async (
 
     if (data.user) {
       promises.push(saveUser(data.user));
+      // Salva o idioma separadamente (sem criptografia) para carregar antes do login
+      if (data.user.language) {
+        promises.push(saveLanguage(data.user.language));
+      }
     }
     if (data.confessions) {
       promises.push(saveConfessions(data.confessions));

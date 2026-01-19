@@ -33,7 +33,7 @@ import {
   validateBackupFormat,
   importBackup,
 } from '../../services/backup';
-import { setEncryptionKeyFromPin } from '../../services/storage';
+import { setEncryptionKeyFromPin, saveLanguage } from '../../services/storage';
 
 export const CadastroScreen: React.FC = () => {
   const { colors, setTheme } = useTheme();
@@ -91,6 +91,8 @@ export const CadastroScreen: React.FC = () => {
       // Configura a chave de criptografia ANTES de salvar dados do usuário
       await setEncryptionKeyFromPin(pin);
       await createUser(name.trim(), selectedTheme, selectedLanguage);
+      // Salva o idioma separadamente para carregar antes do login
+      await saveLanguage(selectedLanguage);
       await register(pin);
     } catch (error) {
       Alert.alert(t('common.error'), t('auth.errorRegister'));

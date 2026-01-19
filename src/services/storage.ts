@@ -21,6 +21,7 @@ const KEYS = {
   CALENDAR_EVENT_ID: '@reconciliare:calendar_event_id',
   PIN: 'reconciliare_pin',
   IS_REGISTERED: '@reconciliare:is_registered',
+  LANGUAGE: '@reconciliare:language',
 };
 
 // Cache da chave de criptografia para evitar múltiplas leituras do SecureStore
@@ -179,6 +180,15 @@ export const getIsRegistered = async (): Promise<boolean> => {
   return data ? JSON.parse(data) : false;
 };
 
+// Funções para idioma (não sensível - precisa carregar antes do login)
+export const saveLanguage = async (language: string): Promise<void> => {
+  await AsyncStorage.setItem(KEYS.LANGUAGE, language);
+};
+
+export const getLanguage = async (): Promise<string | null> => {
+  return await AsyncStorage.getItem(KEYS.LANGUAGE);
+};
+
 // Limpar todos os dados
 export const clearAllData = async (): Promise<void> => {
   await AsyncStorage.multiRemove([
@@ -190,6 +200,7 @@ export const clearAllData = async (): Promise<void> => {
     KEYS.NEXT_CONFESSION,
     KEYS.CALENDAR_EVENT_ID,
     KEYS.IS_REGISTERED,
+    KEYS.LANGUAGE,
   ]);
   await deletePin();
   await clearEncryptionKey();
