@@ -33,11 +33,12 @@ import {
   validateBackupFormat,
   importBackup,
 } from '../../services/backup';
+import { setEncryptionKeyFromPin } from '../../services/storage';
 
 export const CadastroScreen: React.FC = () => {
   const { colors, setTheme } = useTheme();
   const { register, registerFromBackup } = useAuth();
-  const { createUser } = useUser();
+  const { createUser, loadUserData } = useUser();
   const { t } = useLanguage();
 
   const [name, setName] = useState('');
@@ -87,6 +88,8 @@ export const CadastroScreen: React.FC = () => {
   const handleRegister = async () => {
     setLoading(true);
     try {
+      // Configura a chave de criptografia ANTES de salvar dados do usuário
+      await setEncryptionKeyFromPin(pin);
       await createUser(name.trim(), selectedTheme, selectedLanguage);
       await register(pin);
     } catch (error) {
@@ -134,7 +137,9 @@ export const CadastroScreen: React.FC = () => {
       setImportModalVisible(false);
 
       if (result.success) {
-        // Registra o usuário com o PIN do backup e autentica
+        // Carrega os dados do usuário (a chave já foi configurada no importBackup)
+        await loadUserData();
+        // Registra e autentica o usuário
         await registerFromBackup(importPin);
         Alert.alert(t('common.success'), t('auth.restoreSuccess'));
       } else if (result.error === 'wrong_password') {

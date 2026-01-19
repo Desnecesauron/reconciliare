@@ -2,28 +2,45 @@
 
 import CryptoJS from 'crypto-js';
 import * as SecureStore from 'expo-secure-store';
-import * as Crypto from 'expo-crypto';
 
 const ENCRYPTION_KEY_NAME = 'reconciliare_encryption_key';
+const PIN_KEY = 'reconciliare_pin';
+const SALT = 'reconciliare_v1_salt_2024';
 
-// Gera uma chave aleatória de 256 bits usando expo-crypto
-const generateKey = async (): Promise<string> => {
-  const randomBytes = await Crypto.getRandomBytesAsync(32);
-  // Converte bytes para string hexadecimal
-  return Array.from(randomBytes)
-    .map((byte) => byte.toString(16).padStart(2, '0'))
-    .join('');
+// Deriva uma chave a partir do PIN (determinística)
+export const deriveKeyFromPin = (pin: string): string => {
+  const key = CryptoJS.PBKDF2(pin, SALT, {
+    keySize: 256 / 32,
+    iterations: 1000,
+  });
+  return key.toString();
 };
 
-// Obtém ou cria a chave de criptografia
-export const getOrCreateEncryptionKey = async (): Promise<string> => {
+// Obtém a chave de criptografia (baseada no PIN)
+export const getEncryptionKey = async (): Promise<string | null> => {
+  // Primeiro tenta obter a chave salva
   let key = await SecureStore.getItemAsync(ENCRYPTION_KEY_NAME);
-
-  if (!key) {
-    key = await generateKey();
-    await SecureStore.setItemAsync(ENCRYPTION_KEY_NAME, key);
+  if (key) {
+    return key;
   }
 
+  // Se não tem chave salva, tenta derivar do PIN
+  const pin = await SecureStore.getItemAsync(PIN_KEY);
+  if (pin) {
+    key = deriveKeyFromPin(pin);
+    // Salva a chave derivada para uso futuro
+    await SecureStore.setItemAsync(ENCRYPTION_KEY_NAME, key);
+    return key;
+  }
+
+  // Sem PIN, sem chave
+  return null;
+};
+
+// Salva a chave de criptografia derivada do PIN
+export const saveEncryptionKeyFromPin = async (pin: string): Promise<string> => {
+  const key = deriveKeyFromPin(pin);
+  await SecureStore.setItemAsync(ENCRYPTION_KEY_NAME, key);
   return key;
 };
 

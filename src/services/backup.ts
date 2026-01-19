@@ -17,6 +17,7 @@ import {
   saveLastConfession,
   getNextConfession,
   saveNextConfession,
+  setEncryptionKeyFromPin,
 } from './storage';
 
 interface BackupData {
@@ -69,13 +70,12 @@ const decryptBackup = (backup: EncryptedBackup, password: string): BackupData | 
     // Verifica checksum
     const checksum = generateChecksum(decrypted);
     if (checksum !== backup.checksum) {
-      console.warn('Checksum inválido no backup');
-      return null;
+      return null; // Dados corrompidos ou senha incorreta
     }
 
     return JSON.parse(decrypted);
-  } catch (error) {
-    console.error('Erro ao descriptografar backup:', error);
+  } catch {
+    // Senha incorreta resulta em dados malformados - isso é esperado
     return null;
   }
 };
@@ -208,6 +208,9 @@ export const importBackup = async (
     if (!data) {
       return { success: false, error: 'wrong_password' };
     }
+
+    // Configura a chave de criptografia baseada no PIN ANTES de salvar os dados
+    await setEncryptionKeyFromPin(password);
 
     // Restaura dados
     const promises: Promise<void>[] = [];

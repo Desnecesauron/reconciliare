@@ -3,7 +3,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import { User, Confession, ExamCategory, Sin } from '../types';
-import { getOrCreateEncryptionKey, encrypt, decrypt, clearEncryptionKey } from './encryption';
+import {
+  getEncryptionKey,
+  saveEncryptionKeyFromPin,
+  encrypt,
+  decrypt,
+  clearEncryptionKey,
+} from './encryption';
 
 const KEYS = {
   USER: '@reconciliare:user',
@@ -20,18 +26,33 @@ const KEYS = {
 // Cache da chave de criptografia para evitar múltiplas leituras do SecureStore
 let encryptionKeyCache: string | null = null;
 
-const getKey = async (): Promise<string> => {
+// Obtém a chave de criptografia (do cache ou do SecureStore)
+const getKey = async (): Promise<string | null> => {
   if (!encryptionKeyCache) {
-    encryptionKeyCache = await getOrCreateEncryptionKey();
+    encryptionKeyCache = await getEncryptionKey();
   }
   return encryptionKeyCache;
+};
+
+// Define a chave de criptografia a partir de um PIN (usado durante registro/import)
+export const setEncryptionKeyFromPin = async (pin: string): Promise<void> => {
+  encryptionKeyCache = await saveEncryptionKeyFromPin(pin);
 };
 
 // Salva dado criptografado
 const saveEncrypted = async (key: string, value: string): Promise<void> => {
   const encryptionKey = await getKey();
+  if (!encryptionKey) {
+    throw new Error('Chave de criptografia não disponível');
+  }
   const encryptedValue = encrypt(value, encryptionKey);
   await AsyncStorage.setItem(key, encryptedValue);
+};
+
+// Salva dado criptografado com uma chave específica (para import)
+const saveEncryptedWithKey = async (storageKey: string, value: string, encryptionKey: string): Promise<void> => {
+  const encryptedValue = encrypt(value, encryptionKey);
+  await AsyncStorage.setItem(storageKey, encryptedValue);
 };
 
 // Carrega dado criptografado
@@ -41,6 +62,10 @@ const loadEncrypted = async (key: string): Promise<string | null> => {
 
   try {
     const encryptionKey = await getKey();
+    if (!encryptionKey) {
+      console.warn('Chave de criptografia não disponível para:', key);
+      return null;
+    }
     return decrypt(encryptedValue, encryptionKey);
   } catch (error) {
     // Se falhar ao descriptografar (dados antigos não criptografados), retorna null

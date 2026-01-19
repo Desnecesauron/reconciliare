@@ -36,7 +36,7 @@ import {
 
 export const ConfiguracoesScreen: React.FC = () => {
   const { colors, theme, setTheme } = useTheme();
-  const { user, updateUser } = useUser();
+  const { user, updateUser, loadUserData } = useUser();
   const { resetPin } = useAuth();
   const { t } = useLanguage();
   const navigation = useNavigation();
@@ -133,7 +133,9 @@ export const ConfiguracoesScreen: React.FC = () => {
         setBackupModalVisible(false);
 
         if (result.success) {
-          Alert.alert(t('common.success'), t('settings.importSuccess'));
+          // Recarrega os dados do usuário (a chave já foi configurada no importBackup)
+          await loadUserData();
+          Alert.alert(t('common.success'), t('auth.restoreSuccess'));
         } else if (result.error === 'wrong_password') {
           Alert.alert(t('common.error'), t('settings.importErrorPassword'));
         } else if (result.error === 'invalid_format') {

@@ -1,7 +1,7 @@
 // Context para autenticação (PIN)
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { getPin, savePin, getIsRegistered, setIsRegistered, clearAllData } from '../services/storage';
+import { getPin, savePin, getIsRegistered, setIsRegistered, clearAllData, setEncryptionKeyFromPin } from '../services/storage';
 
 interface AuthContextData {
   isAuthenticated: boolean;
@@ -44,6 +44,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (pin: string): Promise<boolean> => {
     const storedPin = await getPin();
     if (storedPin === pin) {
+      // Configura a chave de criptografia baseada no PIN
+      await setEncryptionKeyFromPin(pin);
       setIsAuthenticated(true);
       return true;
     }
@@ -52,6 +54,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (pin: string): Promise<void> => {
     await savePin(pin);
+    // Configura a chave de criptografia baseada no PIN
+    await setEncryptionKeyFromPin(pin);
     await setIsRegistered(true);
     setIsRegisteredState(true);
     setIsAuthenticated(true);
@@ -60,6 +64,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Registra usuário após importação de backup (usa o PIN do backup)
   const registerFromBackup = async (pin: string): Promise<void> => {
     await savePin(pin);
+    // A chave já foi configurada durante o import
     await setIsRegistered(true);
     setIsRegisteredState(true);
     setIsAuthenticated(true);

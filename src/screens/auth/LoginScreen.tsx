@@ -20,7 +20,7 @@ import { CustomButton } from '../../components';
 export const LoginScreen: React.FC = () => {
   const { colors, resetTheme } = useTheme();
   const { login, clearAll } = useAuth();
-  const { resetUserData } = useUser();
+  const { resetUserData, loadUserData } = useUser();
   const { t } = useLanguage();
 
   const [pin, setPin] = useState('');
@@ -43,7 +43,10 @@ export const LoginScreen: React.FC = () => {
     setLoading(true);
     try {
       const success = await login(pin);
-      if (!success) {
+      if (success) {
+        // Carrega os dados do usuário após configurar a chave de criptografia
+        await loadUserData();
+      } else {
         setError(t('auth.incorrectPin'));
         setPin('');
       }
