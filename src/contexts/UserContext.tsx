@@ -24,6 +24,7 @@ import {
   getCalendarEventId,
   clearCalendarEventId,
 } from '../services/storage';
+import i18n from '../i18n';
 
 interface UserContextData {
   user: User | null;
@@ -265,8 +266,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       endDate.setHours(10, 0, 0, 0); // 10:00 da manhã
 
       const eventId = await Calendar.createEventAsync(defaultCalendar.id, {
-        title: 'Confissão - Reconciliare',
-        notes: 'Lembrete para se confessar. Que Deus abençoe você!',
+        title: i18n.t('calendar.eventTitle'),
+        notes: i18n.t('calendar.eventNotes'),
         startDate,
         endDate,
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
