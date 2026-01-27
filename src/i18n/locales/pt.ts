@@ -141,6 +141,7 @@ export default {
     importDescription: 'Restaurar dados de um backup anterior',
     exportSuccess: 'Backup exportado com sucesso!',
     importSuccess: 'Dados restaurados com sucesso! Reinicie o app para aplicar as alterações.',
+    importSuccessRestart: 'Dados restaurados com sucesso! O aplicativo será reiniciado para aplicar as alterações.',
     importErrorFormat: 'Arquivo de backup inválido. Verifique se selecionou o arquivo correto.',
     importErrorPassword: 'PIN incorreto. Use o mesmo PIN usado para criar o backup.',
     importErrorExtension: 'Arquivo inválido. Selecione um arquivo .rcl gerado pelo Reconciliare.',

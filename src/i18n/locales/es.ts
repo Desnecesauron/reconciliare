@@ -141,6 +141,7 @@ export default {
     importDescription: 'Restaurar datos de una copia de seguridad anterior',
     exportSuccess: '¡Copia de seguridad exportada con éxito!',
     importSuccess: '¡Datos restaurados con éxito! Reinicia la app para aplicar los cambios.',
+    importSuccessRestart: '¡Datos restaurados con éxito! La aplicación se reiniciará para aplicar los cambios.',
     importErrorFormat: 'Archivo de copia de seguridad inválido. Verifica que seleccionaste el archivo correcto.',
     importErrorPassword: 'PIN incorrecto. Usa el mismo PIN usado para crear la copia de seguridad.',
     importErrorUnknown: 'Error al importar la copia de seguridad. Inténtalo de nuevo.',

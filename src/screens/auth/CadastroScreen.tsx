@@ -15,6 +15,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as Updates from 'expo-updates';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUser } from '../../contexts/UserContext';
@@ -139,11 +140,23 @@ export const CadastroScreen: React.FC = () => {
       setImportModalVisible(false);
 
       if (result.success) {
-        // Carrega os dados do usuário (a chave já foi configurada no importBackup)
-        await loadUserData();
-        // Registra e autentica o usuário
+        // Registra o PIN para autenticação
         await registerFromBackup(importPin);
-        Alert.alert(t('common.success'), t('auth.restoreSuccess'));
+        // Mostra alerta e reinicia o app para carregar todos os dados corretamente
+        Alert.alert(
+          t('common.success'),
+          t('settings.importSuccessRestart'),
+          [
+            {
+              text: t('common.ok'),
+              onPress: async () => {
+                await Updates.reloadAsync();
+              },
+            },
+          ],
+          { cancelable: false }
+        );
+        return;
       } else if (result.error === 'wrong_password') {
         Alert.alert(t('common.error'), t('settings.importErrorPassword'));
       } else if (result.error === 'invalid_format') {

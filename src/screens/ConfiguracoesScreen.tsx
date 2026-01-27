@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import * as Updates from 'expo-updates';
 import { useTheme } from '../contexts/ThemeContext';
 import { useUser } from '../contexts/UserContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -153,11 +154,21 @@ export const ConfiguracoesScreen: React.FC = () => {
         if (result.success) {
           // Salva o novo PIN (do backup) para manter consistência com a chave de criptografia
           await savePin(backupPin);
-          // Recarrega os dados do usuário (a chave já foi configurada no importBackup)
-          await loadUserData();
-          // Recarrega o tema
-          await reloadTheme();
-          Alert.alert(t('common.success'), t('auth.restoreSuccess'));
+          // Mostra alerta e reinicia o app para carregar todos os dados corretamente
+          Alert.alert(
+            t('common.success'),
+            t('settings.importSuccessRestart'),
+            [
+              {
+                text: t('common.ok'),
+                onPress: async () => {
+                  await Updates.reloadAsync();
+                },
+              },
+            ],
+            { cancelable: false }
+          );
+          return;
         } else if (result.error === 'wrong_password') {
           Alert.alert(t('common.error'), t('settings.importErrorPassword'));
         } else if (result.error === 'invalid_format') {
