@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Política de Privacidade - Reconciliare</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #8B2F97, #6B1F77);
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo svg {
+            width: 50px;
+            height: 50px;
+            fill: white;
+        }
+        h1 {
+            color: #8B2F97;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 1rem;
+        }
+        .lang-selector {
+            margin-top: 20px;
+        }
+        .lang-selector button {
+            background: none;
+            border: 2px solid #8B2F97;
+            color: #8B2F97;
+            padding: 8px 16px;
+            margin: 0 5px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .lang-selector button:hover,
+        .lang-selector button.active {
+            background: #8B2F97;
+            color: white;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #8B2F97;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0e6f3;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .highlight {
+            background: #f0e6f3;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #8B2F97;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .update-date {
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 15px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+            </div>
+            <h1>Reconciliare</h1>
+            <p class="subtitle" id="subtitle">Política de Privacidade</p>
+            <div class="lang-selector">
+                <button onclick="setLang('pt')" id="btn-pt" class="active">Português</button>
+                <button onclick="setLang('en')" id="btn-en">English</button>
+                <button onclick="setLang('es')" id="btn-es">Español</button>
+            </div>
+        </div>
+
+        <!-- Português -->
+        <div id="content-pt">
+            <div class="card">
+                <h2>Introdução</h2>
+                <p>O Reconciliare é um aplicativo católico de preparação para a confissão. Levamos a privacidade dos nossos usuários muito a sério, especialmente considerando a natureza sensível e espiritual dos dados envolvidos.</p>
+                <div class="highlight">
+                    <strong>Resumo:</strong> O Reconciliare não coleta, armazena ou compartilha seus dados com terceiros. Todas as informações ficam exclusivamente no seu dispositivo.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Dados Armazenados</h2>
+                <p>O aplicativo armazena localmente no seu dispositivo:</p>
+                <ul>
+                    <li><strong>Nome:</strong> Para personalização do app</li>
+                    <li><strong>PIN de acesso:</strong> Armazenado de forma segura e criptografada</li>
+                    <li><strong>Exame de consciência:</strong> Suas marcações durante o exame</li>
+                    <li><strong>Histórico de confissões:</strong> Datas e anotações pessoais</li>
+                    <li><strong>Preferências:</strong> Tema visual e idioma escolhido</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>Segurança dos Dados</h2>
+                <p>Implementamos medidas rigorosas de segurança:</p>
+                <ul>
+                    <li><strong>Criptografia AES:</strong> Todos os dados sensíveis são criptografados</li>
+                    <li><strong>Armazenamento seguro:</strong> O PIN é protegido pelo sistema de segurança nativo do dispositivo</li>
+                    <li><strong>Sem transmissão:</strong> Nenhum dado é enviado pela internet</li>
+                    <li><strong>Controle total:</strong> Você pode apagar todos os dados a qualquer momento</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>O Que NÃO Fazemos</h2>
+                <ul>
+                    <li>Não coletamos dados pessoais</li>
+                    <li>Não enviamos dados para servidores externos</li>
+                    <li>Não usamos ferramentas de analytics ou rastreamento</li>
+                    <li>Não compartilhamos informações com terceiros</li>
+                    <li>Não exibimos anúncios</li>
+                    <li>Não usamos identificadores de publicidade</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>Permissões do Aplicativo</h2>
+                <p>O Reconciliare solicita apenas as seguintes permissões:</p>
+                <ul>
+                    <li><strong>Calendário:</strong> Para agendar lembretes de confissão (opcional)</li>
+                </ul>
+                <p>Nenhuma outra permissão é necessária ou solicitada.</p>
+            </div>
+
+            <div class="card">
+                <h2>Backup e Exportação</h2>
+                <p>O aplicativo permite exportar seus dados em formato criptografado para backup pessoal. Este arquivo fica sob sua responsabilidade e controle total.</p>
+            </div>
+
+            <div class="card">
+                <h2>Contato</h2>
+                <p>Para dúvidas sobre esta política de privacidade ou sobre o aplicativo, entre em contato através do repositório do projeto no GitHub.</p>
+            </div>
+        </div>
+
+        <!-- English -->
+        <div id="content-en" style="display: none;">
+            <div class="card">
+                <h2>Introduction</h2>
+                <p>Reconciliare is a Catholic confession preparation app. We take our users' privacy very seriously, especially considering the sensitive and spiritual nature of the data involved.</p>
+                <div class="highlight">
+                    <strong>Summary:</strong> Reconciliare does not collect, store, or share your data with third parties. All information stays exclusively on your device.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Stored Data</h2>
+                <p>The app stores locally on your device:</p>
+                <ul>
+                    <li><strong>Name:</strong> For app personalization</li>
+                    <li><strong>Access PIN:</strong> Stored securely and encrypted</li>
+                    <li><strong>Examination of conscience:</strong> Your selections during the exam</li>
+                    <li><strong>Confession history:</strong> Dates and personal notes</li>
+                    <li><strong>Preferences:</strong> Visual theme and chosen language</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>Data Security</h2>
+                <p>We implement rigorous security measures:</p>
+                <ul>
+                    <li><strong>AES Encryption:</strong> All sensitive data is encrypted</li>
+                    <li><strong>Secure storage:</strong> PIN is protected by device's native security system</li>
+                    <li><strong>No transmission:</strong> No data is sent over the internet</li>
+                    <li><strong>Full control:</strong> You can delete all data at any time</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>What We DON'T Do</h2>
+                <ul>
+                    <li>We don't collect personal data</li>
+                    <li>We don't send data to external servers</li>
+                    <li>We don't use analytics or tracking tools</li>
+                    <li>We don't share information with third parties</li>
+                    <li>We don't display advertisements</li>
+                    <li>We don't use advertising identifiers</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>App Permissions</h2>
+                <p>Reconciliare only requests the following permissions:</p>
+                <ul>
+                    <li><strong>Calendar:</strong> To schedule confession reminders (optional)</li>
+                </ul>
+                <p>No other permissions are required or requested.</p>
+            </div>
+
+            <div class="card">
+                <h2>Backup and Export</h2>
+                <p>The app allows you to export your data in encrypted format for personal backup. This file is under your full responsibility and control.</p>
+            </div>
+
+            <div class="card">
+                <h2>Contact</h2>
+                <p>For questions about this privacy policy or the app, please contact us through the project repository on GitHub.</p>
+            </div>
+        </div>
+
+        <!-- Español -->
+        <div id="content-es" style="display: none;">
+            <div class="card">
+                <h2>Introducción</h2>
+                <p>Reconciliare es una aplicación católica de preparación para la confesión. Nos tomamos muy en serio la privacidad de nuestros usuarios, especialmente considerando la naturaleza sensible y espiritual de los datos involucrados.</p>
+                <div class="highlight">
+                    <strong>Resumen:</strong> Reconciliare no recopila, almacena ni comparte sus datos con terceros. Toda la información permanece exclusivamente en su dispositivo.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Datos Almacenados</h2>
+                <p>La aplicación almacena localmente en su dispositivo:</p>
+                <ul>
+                    <li><strong>Nombre:</strong> Para personalización de la app</li>
+                    <li><strong>PIN de acceso:</strong> Almacenado de forma segura y encriptada</li>
+                    <li><strong>Examen de conciencia:</strong> Sus selecciones durante el examen</li>
+                    <li><strong>Historial de confesiones:</strong> Fechas y notas personales</li>
+                    <li><strong>Preferencias:</strong> Tema visual e idioma elegido</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>Seguridad de los Datos</h2>
+                <p>Implementamos rigurosas medidas de seguridad:</p>
+                <ul>
+                    <li><strong>Encriptación AES:</strong> Todos los datos sensibles están encriptados</li>
+                    <li><strong>Almacenamiento seguro:</strong> El PIN está protegido por el sistema de seguridad nativo del dispositivo</li>
+                    <li><strong>Sin transmisión:</strong> Ningún dato se envía por internet</li>
+                    <li><strong>Control total:</strong> Puede eliminar todos los datos en cualquier momento</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>Lo Que NO Hacemos</h2>
+                <ul>
+                    <li>No recopilamos datos personales</li>
+                    <li>No enviamos datos a servidores externos</li>
+                    <li>No usamos herramientas de análisis o seguimiento</li>
+                    <li>No compartimos información con terceros</li>
+                    <li>No mostramos anuncios</li>
+                    <li>No usamos identificadores de publicidad</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>Permisos de la Aplicación</h2>
+                <p>Reconciliare solo solicita los siguientes permisos:</p>
+                <ul>
+                    <li><strong>Calendario:</strong> Para programar recordatorios de confesión (opcional)</li>
+                </ul>
+                <p>No se requieren ni solicitan otros permisos.</p>
+            </div>
+
+            <div class="card">
+                <h2>Respaldo y Exportación</h2>
+                <p>La aplicación permite exportar sus datos en formato encriptado para respaldo personal. Este archivo queda bajo su total responsabilidad y control.</p>
+            </div>
+
+            <div class="card">
+                <h2>Contacto</h2>
+                <p>Para preguntas sobre esta política de privacidad o la aplicación, contáctenos a través del repositorio del proyecto en GitHub.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Reconciliare - App Católico de Preparação para Confissão</p>
+            <p class="update-date" id="update-date">Última atualização: Fevereiro de 2026</p>
+        </div>
+    </div>
+
+    <script>
+        const subtitles = {
+            pt: 'Política de Privacidade',
+            en: 'Privacy Policy',
+            es: 'Política de Privacidad'
+        };
+        const updateTexts = {
+            pt: 'Última atualização: Fevereiro de 2026',
+            en: 'Last updated: February 2026',
+            es: 'Última actualización: Febrero de 2026'
+        };
+
+        function setLang(lang) {
+            document.getElementById('content-pt').style.display = lang === 'pt' ? 'block' : 'none';
+            document.getElementById('content-en').style.display = lang === 'en' ? 'block' : 'none';
+            document.getElementById('content-es').style.display = lang === 'es' ? 'block' : 'none';
+
+            document.getElementById('btn-pt').classList.toggle('active', lang === 'pt');
+            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+            document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+
+            document.getElementById('subtitle').textContent = subtitles[lang];
+            document.getElementById('update-date').textContent = updateTexts[lang];
+            document.documentElement.lang = lang === 'pt' ? 'pt-BR' : lang === 'en' ? 'en' : 'es';
+        }
+    </script>
+</body>
+</html>
