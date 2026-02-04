@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
 import { useUser } from '../contexts/UserContext';
@@ -21,6 +22,7 @@ export const ExameConscienciaScreen: React.FC = () => {
   const { saveExam, loadExam, addSin, removeSin, mySins, examState } = useUser();
   const { t, language } = useLanguage();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   const [categories, setCategories] = useState<ExamCategory[]>([]);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
@@ -211,7 +213,7 @@ export const ExameConscienciaScreen: React.FC = () => {
           />
         )}
         stickySectionHeadersEnabled={false}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingBottom: 20 + insets.bottom }]}
       />
     </View>
   );
@@ -258,9 +260,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  listContent: {
-    paddingBottom: 20,
-  },
+  listContent: {},
   categoryHeader: {
     flexDirection: 'row',
     alignItems: 'center',
