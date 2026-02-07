@@ -156,9 +156,13 @@ export default {
   contribute: {
     title: 'Contribuir',
     text1: '¡Muchas gracias por usar la app RECONCILIARE! Esperamos que esto pueda ayudarte en tus confesiones.',
-    text2: 'Si deseas contribuir con alguna donación para ayudar a mantener este proyecto, haz clic en el botón de abajo.',
+    text2: 'Si deseas contribuir con alguna donación para ayudar a mantener este proyecto, elige una de las opciones de abajo.',
     text3: 'Tu contribución ayuda a mantener la aplicación gratuita y disponible para todos los católicos que desean vivir una vida de oración y reconciliación con Dios.',
-    donateButton: 'QUIERO HACER UNA DONACIÓN',
+    pixDescription: 'Copia la clave PIX abajo o toca para seleccionar (solo Brasil):',
+    copyPix: 'COPIAR CLAVE PIX',
+    copied: '¡COPIADO!',
+    coffeeDescription: 'Apoya el proyecto con una donación internacional:',
+    buyMeACoffee: 'BUY ME A COFFEE',
     thankYou: '¡Que Dios te bendiga a ti y a tu familia!',
   },
 

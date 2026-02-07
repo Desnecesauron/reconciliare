@@ -62,9 +62,6 @@ export const Avatar: React.FC<AvatarProps> = ({
             style={[
               styles.placeholder,
               {
-                width: size,
-                height: size,
-                borderRadius: size / 2,
                 backgroundColor: colors.surface,
               },
             ]}
@@ -123,11 +120,15 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   placeholder: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   initials: {
     fontWeight: '600',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    includeFontPadding: false,
   },
   editButton: {
     position: 'absolute',

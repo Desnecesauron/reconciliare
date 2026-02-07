@@ -1,21 +1,33 @@
 // Tela Contribuir
 
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { CustomButton } from '../components';
 
+const PIX_KEY = '1e80253b-4061-4962-af45-b1d6da19c7f0';
+const BUYMEACOFFEE_URL = 'https://buymeacoffee.com/cesar_gomes';
+
 export const ContribuirScreen: React.FC = () => {
   const { colors } = useTheme();
   const { t } = useLanguage();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+  const [copied, setCopied] = useState(false);
 
-  const handleDonate = () => {
-    // Aqui você pode adicionar um link para doação
-    Linking.openURL('https://example.com/donate');
+  const handleCopyPix = async () => {
+    await Clipboard.setStringAsync(PIX_KEY);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleBuyMeACoffee = () => {
+    Linking.openURL(BUYMEACOFFEE_URL);
   };
 
   return (
@@ -36,7 +48,7 @@ export const ContribuirScreen: React.FC = () => {
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={styles.contentContainer}
+        contentContainerStyle={[styles.contentContainer, { paddingBottom: 20 + insets.bottom }]}
       >
         <Text style={[styles.text, { color: colors.text }]}>
           {t('contribute.text1')}
@@ -50,10 +62,48 @@ export const ContribuirScreen: React.FC = () => {
           {t('contribute.text3')}
         </Text>
 
-        <View style={styles.buttonsContainer}>
+        {/* Seção PIX */}
+        <View style={[styles.donationSection, { backgroundColor: colors.surface }]}>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="qr-code-outline" size={24} color={colors.primary} />
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              PIX
+            </Text>
+          </View>
+          <Text style={[styles.sectionDescription, { color: colors.textLight }]}>
+            {t('contribute.pixDescription')}
+          </Text>
+          <View
+            style={[styles.pixKeyContainer, { backgroundColor: colors.background, borderColor: colors.border }]}
+          >
+            <Text
+              style={[styles.pixKey, { color: colors.text }]}
+              selectable={true}
+            >
+              {PIX_KEY}
+            </Text>
+          </View>
           <CustomButton
-            title={t('contribute.donateButton')}
-            onPress={handleDonate}
+            title={copied ? t('contribute.copied') : t('contribute.copyPix')}
+            onPress={handleCopyPix}
+            style={styles.button}
+          />
+        </View>
+
+        {/* Seção Buy Me a Coffee */}
+        <View style={[styles.donationSection, { backgroundColor: colors.surface }]}>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="cafe-outline" size={24} color={colors.primary} />
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              Buy Me a Coffee
+            </Text>
+          </View>
+          <Text style={[styles.sectionDescription, { color: colors.textLight }]}>
+            {t('contribute.coffeeDescription')}
+          </Text>
+          <CustomButton
+            title={t('contribute.buyMeACoffee')}
+            onPress={handleBuyMeACoffee}
             style={styles.button}
           />
         </View>
@@ -112,5 +162,35 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontStyle: 'italic',
     marginTop: 16,
+  },
+  donationSection: {
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  sectionDescription: {
+    fontSize: 14,
+    marginBottom: 12,
+  },
+  pixKeyContainer: {
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginBottom: 12,
+  },
+  pixKey: {
+    fontSize: 12,
+    fontFamily: 'monospace',
+    textAlign: 'center',
   },
 });
