@@ -23,6 +23,7 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.reconciliare.app",
+      "versionCode": 2,
       "permissions": [
         "android.permission.READ_CALENDAR",
         "android.permission.WRITE_CALENDAR"
