@@ -38,6 +38,7 @@ yarn-error.*
 
 # Claude Code
 CLAUDE.md
+.rtk/
 
 # generated native folders
 /ios
